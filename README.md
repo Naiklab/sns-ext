@@ -1,11 +1,7 @@
-# sns-ext
+# Seq-N-Slide: sequencing data analysis pipelines
 
-Extension of SNS pipeline (<https://github.com/igordot/sns>) for advanced analysis and improved plots.
+[![DOI](https://zenodo.org/badge/66501450.svg)](https://zenodo.org/badge/latestdoi/66501450)
 
-New Routes:
+Automated workflows for common sequencing-based (Illumina) protocols, such as RNA-seq, ChIP-seq, ATAC-seq, WGBS/RRBS methylation, whole genome/exome/targeted variant detection, and contaminant screening.
 
--   atac-diff-peaks: Differential peak analysis for atac results.
-
--   advanced-volcano: Updated volcano plots for rna-star-groups-dge
-
--   
+For more information, see the full documentation at https://igordot.github.io/sns
