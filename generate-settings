@@ -23,6 +23,8 @@ main();
 sub main {
 	my $genome_arg = $ARGV[0];
 
+	my $account_name= $ARGV[1];
+
 	# pipeline directory (the directory that this file is in)
 	my $pipeline_dir = dirname(__FILE__);
 
@@ -40,25 +42,40 @@ sub main {
 		# use directory if given
 		$genome_dir_setting = "GENOME-DIR|${genome_arg}\n";
 	}
+	else if ($genome_arg eq "hg38") {
+		# use genome name if provided
+		$genome_dir_setting = "GENOME-DIR|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/H_sapiens/GRCh38/current/"
+		$settings_fasta = "REF-FASTA|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/H_sapiens/GRCh38/current/Homo_sapiens.GRCh38.dna.primary_assembly.fa"
+		$settings_gtf="REF-GTF|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Annotation/Gencode/Human/GRCh38/current/gencode.v40.primary_assembly.annotation.gtf"
+
+	}
+	else if ($genome_arg eq "mm10") {
+		# use genome name if provided
+		$genome_dir_setting = "GENOME-DIR|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/M_musculus/GRCm39/current/"
+		$settings_fasta = "REF-FASTA|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/M_musculus/GRCm39/current/Mus_musculus.GRCm39.dna.primary_assembly.fa"
+		$settings_gtf="REF-GTF|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Annotation/Gencode/Mouse/GRCm39/current/gencode.vM29.primary_assembly.annotation.gtf"
 	else {
-		# use /gpfs/data/igorlab/ref if genome name is provided
-		$genome_dir_setting = "GENOME-DIR|/gpfs/data/igorlab/ref/${genome_arg}\n";
+		die "\n\n ERROR: GENOME $genome_arg NOT FOUND \n\n";
 	}
 
 	# save genome setting
 	open(my $fh, ">", $settings_file);
 	# print $fh $genome_setting;
 	print $fh $genome_dir_setting;
+	print $fh $settings_fasta;
+	print $fh $settings_gtf;
 	close $fh;
 
 	# get values to make sure they were set properly
 	my $settings_genome = `bash ${pipeline_dir}/scripts/get-set-setting.sh $settings_file GENOME-DIR`;
 	my $settings_fasta = `bash ${pipeline_dir}/scripts/get-set-setting.sh $settings_file REF-FASTA`;
+	my $settings_gtf = `bash ${pipeline_dir}/scripts/get-set-setting.sh $settings_file REF-GTF`;
 
 	# print values
 	print STDERR "\n";
 	print STDERR " REF DIR : $settings_genome \n";
 	print STDERR " REF FASTA : $settings_fasta \n";
+	print STDERR " REF-GTF : $settings_gtf \n";
 
 }
 

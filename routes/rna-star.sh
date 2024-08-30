@@ -5,7 +5,6 @@
 ## RNA-seq using STAR aligner
 ##
 
-
 # script filename
 script_path="${BASH_SOURCE[0]}"
 script_name=$(basename "$script_path")
@@ -18,6 +17,8 @@ if [ ! $# == 2 ] ; then
 	echo -e "\n USAGE: $script_name project_dir sample_name \n" >&2
 	exit 1
 fi
+# Allocation account 
+#BSUB -P account_name
 
 # standard route arguments
 proj_dir=$(readlink -f "$1")
@@ -37,10 +38,12 @@ echo " * sample: $sample "
 echo " * code_dir: $code_dir "
 echo " * bsubthreads: $BSUB_CPUS_PER_TASK "
 echo " * command threads: $threads "
+echo " * alloc_account: $account_name "
 echo
 
-# specify maximum runtime for sbatch job
-#BSUB -W 24:00
+# specify maximum runtime for bsub job
+
+#BSUB -W 48:00
 
 
 #########################
@@ -122,12 +125,9 @@ fi
 # generate BigWig (deeptools)
 segment_bw_deeptools="bigwig-deeptools"
 bash_cmd="bash ${code_dir}/segments/${segment_bw_deeptools}.sh $proj_dir $sample 4 $bam_star"
-sbatch_perf="--nodes=1 --ntasks=1 --cpus-per-task=5 --mem=25G"
-sbatch_mail="--mail-user=${USER}@nyulangone.org --mail-type=FAIL,REQUEUE"
-sbatch_name="--job-name=sns.${segment_bw_deeptools}.${sample}"
-sbatch_cmd="sbatch --time=8:00:00 ${sbatch_name} ${sbatch_perf} ${sbatch_mail} --export=NONE --wrap='${bash_cmd}'"
-echo "CMD: $sbatch_cmd"
-(eval $sbatch_cmd)
+bsub_cmd="bsub -n 1 -R 'span[hosts=1]' -W 8:00 -J sns.${segment_bw_deeptools}.${sample} ${bash_cmd}"
+echo "CMD: $bsub_cmd"
+(eval $bsub_cmd)
 
 # Picard CollectRnaSeqMetrics
 segment_qc_picard="qc-picard-rnaseqmetrics"
@@ -199,3 +199,4 @@ date
 
 
 # end
+
