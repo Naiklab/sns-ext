@@ -2,7 +2,7 @@
 
 
 # run FastQC
-
+source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -38,7 +38,7 @@ report_html="${out_dir}/${fastqc_basename}.html"
 report_zip="${out_dir}/${fastqc_basename}.zip"
 
 # unload all loaded modulefiles
-module purge
+#module purge
 
 
 #########################
@@ -73,9 +73,9 @@ fi
 
 # run FastQC
 
-module add fastqc/0.11.9
+module add fastqc/0.11.8
 
-# check that the binary is found
+# check that the fastqc is found
 if [ ! -x "$(command -v fastqc)" ]; then
 	echo -e "\n $script_name ERROR: fastqc module not loaded properly \n" >&2
 	exit 1
@@ -94,14 +94,14 @@ echo
 # --nogroup    disable grouping of bases for reads >50bp
 
 fastqc_cmd="fastqc \
---quiet --noextract \
+--noextract \
 --threads $threads \
 --outdir $out_dir \
 $fastq
 "
 echo "CMD: $fastqc_cmd"
-$fastqc_cmd
-
+eval "$fastqc_cmd"
+echo 'FASTQC DONE'
 
 #########################
 

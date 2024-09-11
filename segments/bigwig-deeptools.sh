@@ -3,6 +3,7 @@
 
 # deepTools generate BigWig from BAM
 
+source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"

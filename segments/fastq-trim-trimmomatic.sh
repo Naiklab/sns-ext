@@ -1,9 +1,6 @@
 #!/bin/bash
 
-
 # run Trimmomatic
-
-
 # script filename
 script_path="${BASH_SOURCE[0]}"
 script_name=$(basename "$script_path")
@@ -19,11 +16,11 @@ if [ $# -lt 4 ] ; then
 fi
 
 # arguments
-proj_dir=$1
-sample=$2
-threads=$3
-fastq_R1=$4
-fastq_R2=$5
+proj_dir="$1"
+sample="$2"
+threads="$3"
+fastq_R1="$4"
+fastq_R2="$5"
 
 
 #########################
@@ -64,9 +61,9 @@ trimmomatic_logs_dir="${proj_dir}/logs-trimmomatic"
 mkdir -p "$trimmomatic_logs_dir"
 trimmomatic_log="${trimmomatic_logs_dir}/${sample}.txt"
 
-# unload all loaded modulefiles
-module purge
-module add default-environment
+# unload all loaded modulefiles - not needed in Minerva
+#module purge
+#module add default-environment
 
 
 #########################
@@ -111,9 +108,9 @@ fi
 
 # Trimmomatic
 
-module add trimmomatic/0.36
+module load trimmomatic/0.36
 
-trimmomatic_jar="${TRIMMOMATIC_ROOT}/trimmomatic-0.36.jar"
+trimmomatic_jar="/hpc/packages/minerva-common/trimmomatic/0.36/trimmomatic-0.36.jar"
 
 # check if the trimmomatic jar file is present
 if [ ! -s "$trimmomatic_jar" ] ; then
@@ -147,7 +144,7 @@ java -Xms8G -Xmx8G -jar $trimmomatic_jar \
 $run_type_arg \
 -threads $threads \
 $files_arg \
-ILLUMINACLIP:/gpfs/data/igorlab/ref/contaminants/trimmomatic.fa:2:30:10:1:true \
+ILLUMINACLIP:/hpc/packages/minerva-common/trimmomatic/0.36/adapters/TruSeq3-PE.fa:2:30:10 \
 TRAILING:5 SLIDINGWINDOW:4:15 MINLEN:35 \
 2> $trimmomatic_log
 "
@@ -198,7 +195,7 @@ fi
 reads_input=$(cat $trimmomatic_log | grep "Input Read" | cut -d ' ' -f $total_reads_col)
 reads_surviving=$(cat $trimmomatic_log | grep "Input Read" | cut -d ' ' -f $surviving_reads_col)
 
-reads_surviving_pct=$(echo "(${reads_surviving}/${reads_input})*100" | bc -l | cut -c 1-4)
+reads_surviving_pct=$(echo "scale=2; (${reads_surviving}/${reads_input})*100" | bc | cut -c 1-4)
 reads_surviving_pct="${reads_surviving_pct}%"
 
 # header for summary file
