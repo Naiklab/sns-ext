@@ -56,21 +56,16 @@ sub main {
 		$settings_fasta = "REF-FASTA|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/H_sapiens/GRCh38/current/Homo_sapiens.GRCh38.dna.primary_assembly.fa";
 		$settings_gtf="REF-GTF|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Annotation/Gencode/Human/GRCh38/current/gencode.v40.primary_assembly.annotation.gtf";
 		$fastq_screen="REF-FASTQSCREEN|/sc/arion/projects/naiklab/ikjot/reference_files/fastq_screen.conf";
-		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR-human";
-		$strand="EXP-STRAND|unstr"; # Set to unstr by default
-		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/refFlat.txt.gz";
-		$interval_list="RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/hg38_rRNA.list";
+		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR";
+		$strand="EXP-STRAND|unstr";
+		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/refFlat.txt.gz";
+		$interval_list="RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/hg38_rRNA.list";
 	}
 	elsif ($genome_arg eq "mm10") {
 		# use genome name if provided
 		$genome_dir_setting = "GENOME-DIR|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/M_musculus/GRCm39/current/";
 		$settings_fasta = "REF-FASTA|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/M_musculus/GRCm39/current/Mus_musculus.GRCm39.dna.primary_assembly.fa";
 		$settings_gtf="REF-GTF|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Annotation/Gencode/Mouse/GRCm39/current/gencode.vM29.primary_assembly.annotation.gtf";
-		$fastq_screen="REF-FASTQSCREEN|/sc/arion/projects/naiklab/ikjot/reference_files/fastq_screen.conf";
-		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR";
-		$strand="EXP-STRAND|unstr"; # Set to unstr by default
-		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/refFlat.txt.gz";
-		$interval_list="RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/mm10_rRNA.list";
 	}
 	else {
 		die "\n\n ERROR: GENOME $genome_arg NOT FOUND \n\n";
@@ -78,15 +73,10 @@ sub main {
 
 	# save genome setting
 	open(my $fh, ">", $settings_file);
-	#print $fh $genome_setting;
+	# print $fh $genome_setting;
 	print $fh "$genome_dir_setting \n";
 	print $fh "$settings_fasta \n";
 	print $fh "$settings_gtf \n";
-	print $fh "$fastq_screen \n";
-	print $fh "$ref_star \n";
-	print $fh "$strand \n";
-	print $fh "$flat \n";
-	print $fh "$interval_list \n";
 	close $fh;
 
 	# get values to make sure they were set properly
