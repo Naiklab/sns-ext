@@ -3,6 +3,7 @@
 
 # deepTools generate BigWig from BAM
 
+source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -71,6 +72,7 @@ fi
 
 #no module for deeptools/3.5.1 exists in Minerva
 # Loading the conda environment 
+
 source activate /sc/arion/projects/naiklab/ikjot/conda_envs/deeptools
 
 # check that the binary is found

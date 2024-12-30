@@ -1,9 +1,10 @@
 #!/bin/bash
 
-
 ##
 ## RNA-seq using STAR aligner
 ##
+
+source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -17,8 +18,9 @@ if [ ! $# == 2 ] ; then
 	echo -e "\n USAGE: $script_name project_dir sample_name \n" >&2
 	exit 1
 fi
-# Allocation account 
-#BSUB -P account_name
+# Allocation account and time
+account_name="acc_naiklab"
+alloc_time="48:00"
 
 # standard route arguments
 proj_dir=$(readlink -f "$1")
@@ -28,22 +30,25 @@ sample=$2
 code_dir=$(dirname $(dirname "$script_path"))
 
 # reserve a thread for overhead
-threads=$BSUB_CPUS_PER_TASK
+threads=6
 threads=$(( threads - 1 ))
+
+# specify maximum runtime for bsub job
+
+#BSUB_RUNTIME=48:00
 
 # display settings
 echo
 echo " * proj_dir: $proj_dir "
 echo " * sample: $sample "
 echo " * code_dir: $code_dir "
-echo " * bsubthreads: $BSUB_CPUS_PER_TASK "
+echo " * bsubthreads: $threads "
 echo " * command threads: $threads "
 echo " * alloc_account: $account_name "
+echo " * alloc_time: $alloc_time "
 echo
 
-# specify maximum runtime for bsub job
 
-#BSUB -W 48:00
 
 
 #########################
@@ -71,15 +76,15 @@ fi
 # run FastQC (separately for paired-end reads)
 segment_qc_fastqc="qc-fastqc"
 bash_cmd="bash ${code_dir}/segments/${segment_qc_fastqc}.sh $proj_dir $sample $threads $fastq_R1"
-($bash_cmd)
+eval "$bash_cmd"
 if [ -n "$fastq_R2" ] ; then
 	bash_cmd="bash ${code_dir}/segments/${segment_qc_fastqc}.sh $proj_dir $sample $threads $fastq_R2"
-	($bash_cmd)
+	eval "$bash_cmd"
 fi
 
-# fastq_screen
+# fastq_screen 
 bash_cmd="bash ${code_dir}/segments/qc-fastqscreen.sh $proj_dir $sample $threads $fastq_R1"
-($bash_cmd)
+eval "$bash_cmd"
 
 # trim FASTQs with Trimmomatic
 segment_fastq_trim="fastq-trim-trimmomatic"
@@ -87,7 +92,7 @@ fastq_R1_trimmed=$(grep -s -m 1 "^${sample}," "${proj_dir}/samples.${segment_fas
 fastq_R2_trimmed=$(grep -s -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_trim}.csv" | cut -d ',' -f 3)
 if [ -z "$fastq_R1_trimmed" ] ; then
 	bash_cmd="bash ${code_dir}/segments/${segment_fastq_trim}.sh $proj_dir $sample $threads $fastq_R1 $fastq_R2"
-	($bash_cmd)
+	eval "$bash_cmd"
 	fastq_R1_trimmed=$(grep -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_trim}.csv" | cut -d ',' -f 2)
 	fastq_R2_trimmed=$(grep -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_trim}.csv" | cut -d ',' -f 3)
 fi
@@ -125,14 +130,14 @@ fi
 # generate BigWig (deeptools)
 segment_bw_deeptools="bigwig-deeptools"
 bash_cmd="bash ${code_dir}/segments/${segment_bw_deeptools}.sh $proj_dir $sample 4 $bam_star"
-bsub_cmd="bsub -n 1 -R 'span[hosts=1]' -W 8:00 -J sns.${segment_bw_deeptools}.${sample} ${bash_cmd}"
+bsub_cmd="bsub -W 48:00 -R rusage[mem=16000] -R span[hosts=1] -R himem -P ${account_name}  -n ${threads} -q premium -J sns.${segment_bw_deeptools}.${sample} ${bash_cmd}"
 echo "CMD: $bsub_cmd"
 (eval $bsub_cmd)
 
 # Picard CollectRnaSeqMetrics
 segment_qc_picard="qc-picard-rnaseqmetrics"
 bash_cmd="bash ${code_dir}/segments/${segment_qc_picard}.sh $proj_dir $sample $bam_star"
-($bash_cmd)
+(eval $bash_cmd)
 
 # determine run type for featurecounts
 if [ -n "$fastq_R2" ] ; then

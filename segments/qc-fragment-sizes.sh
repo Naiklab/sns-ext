@@ -77,7 +77,7 @@ code_dir=$(dirname $(dirname "$script_path"))
 
 # calculate and plot fragment size distribution
 
-module add r/4.1.2
+module add R/4.1.0
 
 echo
 echo " * R: $(readlink -f $(which R)) "

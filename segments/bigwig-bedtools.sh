@@ -75,7 +75,7 @@ fi
 
 module load samtools/1.3
 module load bedtools/2.26.0
-module load kentutils/329
+module load kentutils/302.1
 
 # determine normalization scaling factor
 mapped_reads=$(samtools view -c $bam)

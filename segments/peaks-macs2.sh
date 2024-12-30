@@ -3,6 +3,7 @@
 
 # MACS peak calling
 
+source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -75,11 +76,9 @@ mkdir -p "$bigwig_dir"
 macs_bw="${bigwig_dir}/${sample}.macs2.bw"
 
 # unload all loaded modulefiles
-module purge
-
+#module purge
 
 #########################
-
 
 # exit if output exits already
 
@@ -88,9 +87,7 @@ if [ -s "$peaks_bed" ] ; then
 	exit 1
 fi
 
-
 #########################
-
 
 # check that inputs exist
 
@@ -106,12 +103,12 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
-genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR);
+genome_build=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-GENOMEBUILD);
 
-if [ ! -d "$genome_dir" ] ; then
-	echo -e "\n $script_name ERROR: genome dir $genome_dir does not exist \n" >&2
-	exit 1
-fi
+#if [ ! -d "$genome_dir" ] ; then
+#	echo -e "\n $script_name ERROR: genome dir $genome_dir does not exist \n" >&2
+#	exit 1
+#fi
 
 chrom_sizes=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-CHROMSIZES);
 
@@ -134,12 +131,17 @@ fi
 # MACS parameters
 
 # MACS-style genome abbreviation (keep first two characters of build name)
-genome_build=$(basename "$genome_dir")
-macs_genome="${genome_build:0:2}"
+
+#genome_build=$(basename "$genome_dir") - Genome Directory is not used in this script
+#macs_genome="${genome_build:0:2}"
 
 # fix if hgXX
-if [ "$macs_genome" == "hg" ] ; then
+if [ "$genome_build" == "hg38" ] ; then
 	macs_genome="hs"
+fi
+
+if [ "$genome_build" == "mm10" ] ; then
+	macs_genome="mm"
 fi
 
 # adjust for control sample
@@ -167,8 +169,8 @@ fi
 
 # MACS
 
-# MACS is part of python/cpu/2.7.15 module
-module add python/cpu/2.7.15
+# MACS is available on Minerva
+module add macs/2.1.0
 
 echo
 echo " * MACS: $(readlink -f $(which macs2)) "
@@ -221,7 +223,7 @@ fi
 # generate an image about the model based on the data
 # --nomodel will bypass building the shifting model
 
-module add r/4.1.2
+module add R/4.2.0
 
 if [ -s "$model_r" ] ; then
 
@@ -247,7 +249,10 @@ sleep 5
 # generate a blacklist-filtered BED file
 
 module purge
-module add bedtools/2.30.0
+
+
+
+module add bedtools/2.31.0
 
 echo
 echo " * bedtools: $(readlink -f $(which bedtools)) "
@@ -303,9 +308,12 @@ if [ ! -s "$macs_bdg_treat" ] ; then
 	exit 1
 fi
 
+micromamba activate atac-star
+
 # ucscutils/374 requires mariadb/5.5.64 to be loaded
-module add ucscutils/374
-module add mariadb/5.5.64
+#module add ucscutils/374 - Added path to directory with ucsc_utils paths
+#module add mariadb/5.5.64 - Included in conda environment - rna-star
+
 
 if [ ! -s "$macs_bw" ] ; then
 
@@ -320,7 +328,7 @@ if [ ! -s "$macs_bw" ] ; then
 	echo -e "\n CMD: $bdg_sort_cmd \n"
 	eval "$bdg_sort_cmd"
 
-	bw_cmd="bedGraphToBigWig $macs_bdg_treat_sort $chrom_sizes $macs_bw"
+	bw_cmd="/sc/arion/projects/naiklab/ikjot/Utils/bedGraphToBigWig $macs_bdg_treat_sort $chrom_sizes $macs_bw"
 	echo -e "\n CMD: $bw_cmd \n"
 	eval "$bw_cmd"
 

@@ -161,11 +161,11 @@ vsd = varianceStabilizingTransformation(dds, blind = TRUE)
 message(" ========== save data ========== ")
 
 # save session information
-sessioninfo::session_info(to_file = glue("{r_dir}/session-info.txt"))
+#sessioninfo::session_info(to_file = paste("r-data/session-info.txt"))
 
 # save DESeqDataSet and VST DESeqTransform objects
-saveRDS(dds, file = glue("{r_dir}/deseq2.dds.rds"))
-saveRDS(vsd, file = glue("{r_dir}/deseq2.vsd.rds"))
+saveRDS(dds, file = paste0("r-data/deseq2.dds.rds"))
+saveRDS(vsd, file = paste0("r-data/deseq2.vsd.rds"))
 Sys.sleep(1)
 
 message(" ========== export counts ========== ")

@@ -3,6 +3,7 @@
 
 # HMMRATAC peak calling for ATAC-seq data
 
+source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -76,12 +77,12 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
-genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR);
+#genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR); - No need to set genome dir for HMMRATAC
 
-if [ ! -d "$genome_dir" ] ; then
-	echo -e "\n $script_name ERROR: genome dir $genome_dir does not exist \n" >&2
-	exit 1
-fi
+#if [ ! -d "$genome_dir" ] ; then
+#	echo -e "\n $script_name ERROR: genome dir $genome_dir does not exist \n" >&2
+##	exit 1
+#fi
 
 blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BLACKLIST);
 
@@ -97,7 +98,10 @@ fi
 # MACS
 
 # MACS3 is part of condaenvs/2023/macs3 module
-module add condaenvs/2023/macs3
+#module add condaenvs/2023/macs3
+#module purge
+
+micromamba activate atac-star
 
 echo
 echo " * MACS path: $(readlink -f $(which macs3)) "
