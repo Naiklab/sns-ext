@@ -44,17 +44,18 @@ fi
 
 genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR);
 
-if [ ! -d "$genome_dir" ] ; then
-	echo -e "\n $script_name ERROR: GENOME DIR $genome_dir DOES NOT EXIST \n" >&2
-	exit 1
-fi
+# No directory checks needed for Minerva
+#if [ ! -d "$genome_dir" ] ; then
+#	echo -e "\n $script_name ERROR: GENOME DIR $genome_dir DOES NOT EXIST \n" >&2
+#	exit 1
+#fi
 
 gtf=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-GTF);
 
-if [ ! -s "$gtf" ] || [ ! "$gtf" ] ; then
-	echo -e "\n $script_name ERROR: GTF $gtf DOES NOT EXIST \n" >&2
-	exit 1
-fi
+#if [ ! -s "$gtf" ] || [ ! "$gtf" ] ; then
+#	echo -e "\n $script_name ERROR: GTF $gtf DOES NOT EXIST \n" >&2
+#	exit 1
+#fi
 
 groups_table="${proj_dir}/samples.groups.csv"
 
@@ -89,9 +90,6 @@ fi
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
-
-
 #########################
 
 
@@ -150,7 +148,8 @@ sleep 3
 echo -e "\n ========== test R environment ========== \n"
 
 # load relevant modules
-module add r/4.1.2
+
+module load R/4.4.1
 
 echo
 echo " * R: $(readlink -f $(which R)) "

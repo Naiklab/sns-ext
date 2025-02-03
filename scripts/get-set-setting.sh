@@ -49,13 +49,15 @@ fi
 
 
 # determine proper setting value
+#Removing genome_root as it is not used
+#genome_root=$(cat "$settings_txt" | grep "^GENOME-DIR|" | head -1 | cut -d "|" -f 2)
 
-genome_root=$(cat "$settings_txt" | grep "^GENOME-DIR|" | head -1 | cut -d "|" -f 2)
+# Setting value is determined using only ref_type now
 
 if [[ "$setting_name" == REF-* ]] ; then
 	# reference file settings
 	ref_type=${setting_name/REF-/}
-	setting_value=$(bash ${BASH_SOURCE%/*}/get-ref.sh "$genome_root" "$ref_type")
+	setting_value=$(bash ${BASH_SOURCE%/*}/get-ref.sh "$ref_type")
 elif [ -n "$setting_value_arg" ] ; then
 	setting_value=$setting_value_arg
 else

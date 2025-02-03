@@ -3,6 +3,9 @@
 
 # MACS peak calling
 
+source ~/.bashrc  # Reload the bashrc file
+
+conda activate rna-star
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -77,9 +80,7 @@ macs_bw="${bigwig_dir}/${sample}.macs2.bw"
 # unload all loaded modulefiles
 module purge
 
-
 #########################
-
 
 # exit if output exits already
 
@@ -88,9 +89,7 @@ if [ -s "$peaks_bed" ] ; then
 	exit 1
 fi
 
-
 #########################
-
 
 # check that inputs exist
 
@@ -167,8 +166,8 @@ fi
 
 # MACS
 
-# MACS is part of python/cpu/2.7.15 module
-module add python/cpu/2.7.15
+# MACS is available on Minerva
+module add macs/2.1.0
 
 echo
 echo " * MACS: $(readlink -f $(which macs2)) "
@@ -247,7 +246,7 @@ sleep 5
 # generate a blacklist-filtered BED file
 
 module purge
-module add bedtools/2.30.0
+module add bedtools/2.31.0
 
 echo
 echo " * bedtools: $(readlink -f $(which bedtools)) "
@@ -304,8 +303,9 @@ if [ ! -s "$macs_bdg_treat" ] ; then
 fi
 
 # ucscutils/374 requires mariadb/5.5.64 to be loaded
-module add ucscutils/374
-module add mariadb/5.5.64
+#module add ucscutils/374 - Added path to directory with ucsc_utils paths
+#module add mariadb/5.5.64 - Included in conda environment - rna-star
+
 
 if [ ! -s "$macs_bw" ] ; then
 
@@ -320,7 +320,7 @@ if [ ! -s "$macs_bw" ] ; then
 	echo -e "\n CMD: $bdg_sort_cmd \n"
 	eval "$bdg_sort_cmd"
 
-	bw_cmd="bedGraphToBigWig $macs_bdg_treat_sort $chrom_sizes $macs_bw"
+	bw_cmd="/sc/arion/projects/naiklab/ikjot/Utils/bedGraphToBigWig $macs_bdg_treat_sort $chrom_sizes $macs_bw"
 	echo -e "\n CMD: $bw_cmd \n"
 	eval "$bw_cmd"
 

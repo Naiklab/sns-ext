@@ -2,7 +2,7 @@
 
 
 # run FastQ Screen
-
+source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -64,8 +64,8 @@ fastqscreen_png="${fastqscreen_txt/_screen.txt/_screen.png}"
 fastqscreen_html="${fastqscreen_txt/_screen.txt/_screen.html}"
 
 # unload all loaded modulefiles
-module purge
-conda purge
+#module purge
+#conda purge
 
 #########################
 
@@ -88,7 +88,9 @@ fi
 # ImageMagick for "montage" for combining plots
 #module add imagemagick/7.0.8 - Not available in Minerva
 
-source activate /sc/arion/projects/naiklab/ikjot/conda_envs/rna-star # Conda environment for fastq_screen and imagemagick
+# Activate environment
+conda activate rna-star || { echo "Failed to activate RNA-star conda environment"; exit 1; } # Conda environment for fastq_screen and imagemagick
+
 
 bowtie2_bin=$(cat "$fastqscreen_conf" | grep "^BOWTIE2" | head -1 | tr '[:space:]' '\t' | tr -s '\t' | cut -f 2)
 
@@ -125,6 +127,7 @@ fi
 
 CMD="
 fastq_screen \
+--force \
 --aligner bowtie2 \
 --threads $threads \
 --subset 1000000 \
@@ -133,8 +136,8 @@ fastq_screen \
 $fastq
 "
 echo "CMD: $CMD"
-$CMD
-
+eval "$CMD"
+echo 'FASTQ_SCREEN DONE'
 
 #########################
 

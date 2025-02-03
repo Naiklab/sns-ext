@@ -38,8 +38,8 @@ summary_dir="${proj_dir}/summary"
 summary_csv="${summary_dir}/${sample}.${segment_name}.csv"
 
 # unload all loaded modulefiles
-module purge
-module add default-environment
+#module purge
+#module add default-environment
 
 
 #########################
@@ -90,11 +90,11 @@ fi
 
 # run Picard CollectRnaSeqMetrics
 
-module add picard-tools/2.18.20
+module load picard/2.18.4 
 # Picard requires R for some plotting
-module add r/4.1.2
+module load R/4.4.1
 # ImageMagick for "montage" for combining plots
-module add imagemagick/7.0.8
+module load imagemagick/7.0.8-47
 
 picard_jar="${PICARD_ROOT}/libs/picard.jar"
 

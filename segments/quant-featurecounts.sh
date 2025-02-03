@@ -44,10 +44,10 @@ fi
 code_dir=$(dirname $(dirname "$script_path"))
 gtf=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-GTF);
 
-if [ ! -s "$gtf" ] || [ ! "$gtf" ] ; then
-	echo -e "\n $script_name ERROR: GTF $gtf DOES NOT EXIST \n" >&2
-	exit 1
-fi
+#if [ ! -s "$gtf" ] || [ ! "$gtf" ] ; then
+#	echo -e "\n $script_name ERROR: GTF $gtf DOES NOT EXIST \n" >&2
+#	exit 1
+#fi
 
 
 #########################

@@ -97,7 +97,9 @@ fi
 # MACS
 
 # MACS3 is part of condaenvs/2023/macs3 module
-module add condaenvs/2023/macs3
+#module add condaenvs/2023/macs3
+
+conda activate atac-star
 
 echo
 echo " * MACS path: $(readlink -f $(which macs3)) "

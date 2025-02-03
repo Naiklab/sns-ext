@@ -4,7 +4,8 @@
 ##
 ## make csv file more compatible with various tools by removing problematic characters
 ##
-
+source ~/.bashrc  # Reload the bashrc file
+conda activate /sc/arion/projects/naiklab/ikjot/conda_envs/rna-star # Contains dos2unix
 
 # script filename
 script_name=$(basename "${BASH_SOURCE[0]}")
@@ -26,7 +27,7 @@ if [ ! -s "$csv" ] ; then
 fi
 
 # load module
-module add dos2unix/7.4.0
+#module add dos2unix/7.4.0 - not available on Minerva
 
 # fix newlines
 dos2unix --quiet $csv

@@ -29,7 +29,7 @@ function find_file {
 	local file_name=$1
 
 	# find the shortest result
-	local result=$(find -L "$genome_root" -maxdepth 2 -type f -name "$file_name" | awk '{ print length, $0 }' | sort -n | cut -d " " -f 2 | head -1)
+	local result=$(find -L "$genome_root" -type f -name "$file_name" | awk '{ print length, $0 }' | sort -n | cut -d " " -f 2 | head -1)
 
 	if [ -s "$result" ] && [ "$result" ] ; then
 		echo $(readlink -f "$result")
@@ -44,7 +44,7 @@ function find_dir {
 
 	local dir_name=$1
 
-	local result=$(find -L "$genome_root" -maxdepth 1 -type d -iname "$dir_name")
+	local result=$(find -L "$genome_root" -type d -iname "$dir_name")
 
 	if [ -s "$result" ] && [ "$result" ] ; then
 		echo $(readlink -f "$result")
@@ -60,7 +60,7 @@ function find_basename {
 	local suffix=$1
 
 	# find the shortest result
-	local result=$(find -L "$genome_root" -maxdepth 2 -type f -name "genome${suffix}" | awk '{ print length, $0 }' | sort -n | cut -d " " -f 2 | head -1)
+	local result=$(find -L "$genome_root" -type f -name "genome${suffix}" | awk '{ print length, $0 }' | sort -n | cut -d " " -f 2 | head -1)
 
 	if [ -s "$result" ] && [ "$result" ] ; then
 		result=$(readlink -f "$result")
@@ -75,13 +75,14 @@ function find_basename {
 
 #########################
 
-
+# Excluded check for genome root, not needed in this context
 # genome root
 
-if [ ! -d "$genome_root" ] ; then
-	echo -e "\n $script_name ERROR: DIR $genome_root DOES NOT EXIST \n" >&2
-	exit 1
-fi
+
+#if [ ! -d "$genome_root" ] ; then
+#	echo -e "\n $script_name ERROR: DIR $genome_root DOES NOT EXIST \n" >&2
+#	exit 1
+#fi
 
 
 #########################

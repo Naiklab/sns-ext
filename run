@@ -52,11 +52,11 @@ sub main {
 		die "\n\n ERROR: $settings_txt DOES NOT EXIST \n\n";
 	}
 
-	# move to sbatch logs dir so the sbatch output ends up there
-	my $sbatch_logs_dir = "${project_dir}/logs-sbatch";
-	system("mkdir -p $sbatch_logs_dir");
-	print "logs dir: $sbatch_logs_dir \n";
-	chdir($sbatch_logs_dir);
+	# move to bsub logs dir so the bsub output ends up there
+	my $bsub_logs_dir = "${project_dir}/logs-bsub";
+	system("mkdir -p $bsub_logs_dir");
+	print "logs dir: $bsub_logs_dir \n";
+	chdir($bsub_logs_dir);
 
 	# determine sample sheet depending on route type
 	my $samples_csv = get_sample_sheet($project_dir, $code_dir, $route);
@@ -118,14 +118,18 @@ sub get_sample_sheet {
 
 }
 
+# Specify the number of CPUs per task (default is 8)
+#BSUB_CPUS_PER_TASK=8
+
 # process samples and submit a job for each
 sub run_samples {
 	my $project_dir = $_[0];
 	my $route = $_[1];
 	my $route_script = $_[2];
 	my $samples_csv = $_[3];
+	my $alloc_acc = "acc_naiklab";
 	# get the maximum runtime for route (for bsub)
-	my $route_time = `cat $route_script | grep -m 1 "SBATCHTIME="`;
+	my $route_time = `cat $route_script | grep -m 1 "BSUB_RUNTIME="`;
 	chomp($route_time);
 	$route_time =~ s/.*=//;
 	if (length($route_time) < 3 || length($route_time) > 15) {
@@ -160,7 +164,7 @@ sub run_samples {
 	my $threads = "9";
 	if ($num_samples > 50) {
 		# deactivated due to causing memory issues in rare cases
-		# $threads = "5";
+		#$threads = "5";
 	}
 
 	# process each sample
@@ -181,7 +185,7 @@ sub run_samples {
 		# check for "test" argument to test one sample without bsub (for troubleshooting)
 		if (defined($ARGV[1]) && $ARGV[1] eq "test") {
 			print "\n\n test run started \n\n";
-			system("export BSUB_CPUS_PER_TASK=5 && $cmd");
+			system("export BSUB_CPUS_PER_TASK=8 && $cmd");
 			print "\n\n test run finished \n\n";
 			exit;
 		}
@@ -191,9 +195,9 @@ sub run_samples {
 		$email = `echo $email`;
 		chomp($email);
 		my $bsub_name = "-J sns.${route}.${sample}";
-		my $bsub_mail = "-u ${email} -N";
-		my $bsub_res = "-W ${route_time} -n 1 -R 'span[hosts=1]' -R 'rusage[mem=${threads}G]' -M ${threads}G";
-		my $bsub_cmd = "bsub $bsub_res $bsub_name $bsub_mail -o %J.out -e %J.err '${cmd}'";
+		my $bsub_mail = "-u ${email}";
+		my $bsub_res = "-W 48:00 -R rusage[mem=16000] -R span[hosts=1] -R himem -P ${alloc_acc}  -n ${threads} -q premium";
+		my $bsub_cmd = "bsub $bsub_res $bsub_name $bsub_mail -o %J.out -e %J.err  -L /bin/bash '${cmd}'";
 
 		print "\n CMD: $bsub_cmd \n";
 		system($bsub_cmd);
@@ -215,18 +219,20 @@ sub run_groups {
 	my $project_dir = $_[0];
 	my $route = $_[1];
 	my $route_script = $_[2];
+	my $alloc_acc = "acc_naiklab";
 
 	# route command
 	my $cmd = "bash $route_script $project_dir";
 	# system($cmd);
 
 	# bsub command
-	my $email = '${USER}@mssm.edu';
+	my $email = '{USER}@mssm.edu';
 	$email = `echo $email`;
 	chomp($email);
 	my $bsub_name = "-J sns.${route}";
 	my $bsub_mail = "-u ${email} -N";
-	my $bsub_res = "-W 10:00 -n 1 -R 'span[hosts=1]' -R 'rusage[mem=50G]' -M 50G";
+	my $threads = "4";
+	my $bsub_res = "-W 48:00 -R rusage[mem=16000] -R span[hosts=1] -R himem -P ${alloc_acc}  -n ${threads} -q premium";
 	my $bsub_cmd = "bsub $bsub_res $bsub_name $bsub_mail -o %J.out -e %J.err '${cmd}'";
 
 	print "\n CMD: $bsub_cmd \n";

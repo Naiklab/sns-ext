@@ -43,33 +43,43 @@ if (!file.exists(groups_table_file)) stop("file does not exist: ", groups_table_
 r_dir = "r-data"
 if (!dir.exists(r_dir)) dir.create(r_dir)
 
+.libPaths(c("/sc/arion/projects/naiklab/ikjot/R", "/hpc/users/sidhui01/.Rlib"))
+
+print(paste0("RlibPaths =",.libPaths()))
 # for general data manipulation
-load_install_packages("magrittr")
-load_install_packages("tibble")
-load_install_packages("dplyr")
-load_install_packages("tidyr")
-load_install_packages("readr")
-load_install_packages("glue")
+library("magrittr")
+library("tibble")
+library("dplyr")
+library("tidyr")
+library("readr")
+library("glue")
+
 # for differenial expression
-load_install_packages("DESeq2")
-load_install_packages("ashr")
-load_install_packages("genefilter")
+library("DESeq2")
+library("ashr")
+library("genefilter")
+
 # for processing GTF (for gene lengths for FPKMs)
-load_install_packages("rtracklayer")
+library("rtracklayer")
+
 # for exporting Excel xlsx files
-load_install_packages("writexl")
+library("writexl")
+
 # for color scheme
-load_install_packages("RColorBrewer")
+library("RColorBrewer")
+
 # for standard plotting
-load_install_packages("ggplot2")
-load_install_packages("ggrepel")
-load_install_packages("cowplot")
+library("ggplot2")
+library("ggrepel")
+library("cowplot")
+
 # for heatmaps
-load_install_packages("pheatmap")
+library("pheatmap")
+
 # for gene set enrichment (pathways)
-load_install_packages("msigdbr")
-load_install_packages("fgsea")
-load_install_packages("sessioninfo")
+library("msigdbr")
+library("fgsea")
+library("sessioninfo")
 
 message(" ========== import inputs ========== ")
 
@@ -161,11 +171,11 @@ vsd = varianceStabilizingTransformation(dds, blind = TRUE)
 message(" ========== save data ========== ")
 
 # save session information
-sessioninfo::session_info(to_file = glue("{r_dir}/session-info.txt"))
+#sessioninfo::session_info(to_file = paste("r-data/session-info.txt"))
 
 # save DESeqDataSet and VST DESeqTransform objects
-saveRDS(dds, file = glue("{r_dir}/deseq2.dds.rds"))
-saveRDS(vsd, file = glue("{r_dir}/deseq2.vsd.rds"))
+saveRDS(dds, file = paste0("r-data/deseq2.dds.rds"))
+saveRDS(vsd, file = paste0("r-data/deseq2.vsd.rds"))
 Sys.sleep(1)
 
 message(" ========== export counts ========== ")

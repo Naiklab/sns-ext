@@ -1,10 +1,18 @@
 #!/bin/bash
 
+source ~/.bashrc  # Reload the bashrc file
 
 ##
 ## ATAC-seq using Bowtie 2
 ##
 
+# Allocation account and time
+account_name="acc_naiklab"
+alloc_time="48:00"
+
+# specify maximum runtime for bsub job
+
+#BSUB_RUNTIME=48:00
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -27,7 +35,7 @@ sample=$2
 code_dir=$(dirname $(dirname "$script_path"))
 
 # reserve a thread for overhead
-threads=$SLURM_CPUS_PER_TASK
+threads=6
 threads=$(( threads - 1 ))
 
 # display settings
@@ -35,7 +43,7 @@ echo
 echo " * proj_dir: $proj_dir "
 echo " * sample: $sample "
 echo " * code_dir: $code_dir "
-echo " * slurm threads: $SLURM_CPUS_PER_TASK "
+echo " * slurm threads: 6"
 echo " * command threads: $threads "
 echo
 
@@ -106,13 +114,10 @@ fi
 
 # generate BigWig (deeptools)
 segment_bw_deeptools="bigwig-deeptools"
-bash_cmd="bash ${code_dir}/segments/${segment_bw_deeptools}.sh $proj_dir $sample 4 $bam_dd"
-sbatch_perf="--nodes=1 --ntasks=1 --cpus-per-task=5 --mem=25G"
-sbatch_mail="--mail-user=${USER}@nyulangone.org --mail-type=FAIL,REQUEUE"
-sbatch_name="--job-name=sns.${segment_bw_deeptools}.${sample}"
-sbatch_cmd="sbatch --time=8:00:00 ${sbatch_name} ${sbatch_perf} ${sbatch_mail} --export=NONE --wrap='${bash_cmd}'"
-echo "CMD: $sbatch_cmd"
-(eval $sbatch_cmd)
+bash_cmd="bash ${code_dir}/segments/${segment_bw_deeptools}.sh $proj_dir $sample 4 $bam_star"
+bsub_cmd="bsub -W 48:00 -R rusage[mem=16000] -R span[hosts=1] -R himem -P ${account_name}  -n ${threads} -q premium -J sns.${segment_bw_deeptools}.${sample} ${bash_cmd}"
+echo "CMD: $bsub_cmd"
+(eval $bsub_cmd)
 
 # fragment size distribution
 segment_qc_frag_size="qc-fragment-sizes"
@@ -124,15 +129,15 @@ segment_peaks_macs2="peaks-macs2"
 bash_cmd="bash ${code_dir}/segments/${segment_peaks_macs2}.sh $proj_dir atac 0.05 $sample $bam_dd"
 ($bash_cmd)
 
-# call peaks with HMMRATAC (original Java implementation)
-segment_peaks_hmmratac="peaks-hmmratac"
-bash_cmd="bash ${code_dir}/segments/${segment_peaks_hmmratac}.sh $proj_dir $sample $bam_dd 30"
-($bash_cmd)
+# call peaks with HMMRATAC (original Java implementation) - Disregard this step
+#segment_peaks_hmmratac="peaks-hmmratac"
+#bash_cmd="bash ${code_dir}/segments/${segment_peaks_hmmratac}.sh $proj_dir $sample $bam_dd 30"
+#($bash_cmd)
 
 # call peaks with MACS3 HMMRATAC
-segment_peaks_macs3_hmmratac="peaks-macs3-hmmratac"
-bash_cmd="bash ${code_dir}/segments/${segment_peaks_macs3_hmmratac}.sh $proj_dir $sample $bam_dd"
-($bash_cmd)
+#segment_peaks_macs3_hmmratac="peaks-macs3-hmmratac"
+#bash_cmd="bash ${code_dir}/segments/${segment_peaks_macs3_hmmratac}.sh $proj_dir $sample $bam_dd"
+#($bash_cmd)
 
 # call nucleosomes
 # segment_nuc="nucleosomes-nucleoatac"
