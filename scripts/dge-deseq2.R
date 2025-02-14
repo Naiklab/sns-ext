@@ -102,7 +102,11 @@ diff_samples = setdiff(rownames(groups_table), colnames(counts_table))
 if (length(diff_samples)) stop("some samples not in counts table: ", toString(diff_samples))
 
 # subset to samples in groups table (also sets samples to be in the same order)
-counts_table = counts_table[, rownames(groups_table)]
+counts_table = counts_table[, rownames(groups_table)] %>% rownames_to_column(var = "gene")
+
+# Removing pseudo genes
+counts_table = counts_table %>% dplyr::filter(!grepl("^Gm", gene) & !grepl("Rik$", gene)) %>% column_to_rownames(var = "gene")
+
 message("subset counts table gene num:     ", nrow(counts_table))
 message("subset counts table sample num:   ", ncol(counts_table))
 message("")
@@ -127,6 +131,7 @@ message(" ========== import GTF genes annotations ========== ")
 genes_granges = import(genes_gtf)
 message("GTF total entries:      ", length(genes_granges))
 
+
 # extract gene lengths (sum of exons)
 exons_granges = genes_granges[genes_granges$type == "exon"]
 exons_by_gene = split(exons_granges, exons_granges$gene_name)
@@ -136,8 +141,10 @@ message("GTF mean gene length:   ", round(mean(gene_lengths), 2))
 message("GTF median gene length: ", median(gene_lengths))
 message("")
 
+
 # save gene annotations
 genes_tbl = as_tibble(genes_granges)
+
 if ("gene" %in% genes_tbl$type) {
   genes_tbl = dplyr::filter(genes_tbl, type == "gene")
   genes_tbl = dplyr::rename(genes_tbl, chr = seqnames)
@@ -165,7 +172,7 @@ if (identical(sort(names(gene_lengths)), sort(rownames(dds)))) {
 } else {
   message("GTF num genes:          ", length(gene_lengths))
   message("counts table num genes: ", nrow(counts_table))
-  message("dds genes:              ", nrow(dds))
+ message("dds genes:              ", nrow(dds))
   stop("genes in the GTF and the DESeq dataset object do not match")
 }
 

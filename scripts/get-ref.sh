@@ -65,11 +65,11 @@ function find_basename {
 # file references
 
 if [ "$ref_type" == "FASTA" ] ; then
-	find_file genome.fa
+	find_basename .fa
 fi
 
 if [ "$ref_type" == "DICT" ] ; then
-	find_file genome.dict
+	 find_basename .dict
 fi
 
 if [ "$ref_type" == "REFFLAT" ] ; then
@@ -77,11 +77,11 @@ if [ "$ref_type" == "REFFLAT" ] ; then
 fi
 
 if [ "$ref_type" == "GTF" ] ; then
-	find_file genes.gtf
+	find_basename .gtf
 fi
 
 if [ "$ref_type" == "CHROMSIZES" ] ; then
-	find_file chrom.sizes
+	find_basename chrom_sizes_ensembl.txt
 fi
 
 if [ "$ref_type" == "2BIT" ] ; then
@@ -103,7 +103,7 @@ fi
 # directory references
 
 if [ "$ref_type" == "STAR" ] ; then
-	find_dir star
+	find_dir STAR
 fi
 
 if [ "$ref_type" == "BISMARK" ] ; then

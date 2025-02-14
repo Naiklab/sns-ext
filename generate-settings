@@ -64,7 +64,7 @@ sub main {
 		$interval_list="RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/hg38_rRNA.list";
 		$bowtie2="REF-BOWTIE2/sc/arion/projects/naiklab/ikjot/reference_files/bowtie2_hg38_index/human_bowtie2_index";
 		$blacklist="REF-BLACKLIST|/sc/arion/projects/naiklab/ikjot/reference_files/blacklist_files/hg38.blacklist.bed";
-		$chrom_sizes="REF-CHROMSIZES|/sc/arion/projects/naiklab/ikjot/reference_files/Chrom_sizes/hg38.chrom.sizes";
+		$chrom_sizes="REF-CHROMSIZES|/sc/arion/projects/naiklab/ikjot/reference_files/Chrom_sizes/hg38.chrom_sizes_ensembl.txt";
 		$genome_build="REF-GENOMEBUILD|hg38";
 	}
 	elsif ($genome_arg eq "mm10") {
@@ -79,7 +79,7 @@ sub main {
 		$interval_list="RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/mm10_rRNA.list";
 		$bowtie2="REF-BOWTIE2|/sc/arion/projects/naiklab/ikjot/reference_files/bowtie2_mm10_index/mouse_bowtie2_index";
 		$blacklist="REF-BLACKLIST|/sc/arion/projects/naiklab/ikjot/reference_files/blacklist_files/mm10.blacklist.bed";
-		$chrom_sizes="REF-CHROMSIZES|/sc/arion/projects/naiklab/ikjot/reference_files/Chrom_sizes/mm10.chrom.sizes";
+		$chrom_sizes="REF-CHROMSIZES|/sc/arion/projects/naiklab/ikjot/reference_files/Chrom_sizes/mm10.chrom_sizes_ensembl.txt";
 		$genome_build="REF-GENOMEBUILD|mm10";
 	}
 	else {

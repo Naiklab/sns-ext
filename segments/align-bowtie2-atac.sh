@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source ~/.bashrc
 
 # run Bowtie2 with ATAC-seq specific parameters
 
@@ -50,10 +51,10 @@ code_dir=$(dirname $(dirname "$script_path"))
 
 ref_bowtie2=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BOWTIE2);
 
-if [ ! -s "${ref_bowtie2}.fa" ] ; then
-	echo -e "\n $script_name ERROR: REF $ref_bowtie2 DOES NOT EXIST \n" >&2
-	exit 1
-fi
+#if [ ! -s "${ref_bowtie2}.1.bt2" ] ; then
+#	echo -e "\n $script_name ERROR: REF $ref_bowtie2 DOES NOT EXIST \n" >&2
+#	exit 1
+#fi
 
 
 #########################
@@ -118,15 +119,14 @@ fi
 # step 2: convert SAM to BAM and remove low quality reads
 # step 3: sort BAM
 # to do: add Picard AddOrReplaceReadGroups for extra compatibility
+#conda deactivate
 
-module add bowtie2/2.3.4.1
+module add bowtie2/2.4.4
 module add samtools/1.9
 
 echo
-echo " * bowtie2: $(readlink -f $(which bowtie2)) "
+echo " * bowtie2: $(which bowtie2) "
 echo " * bowtie2 version: $(bowtie2 --version 2>&1 | head -1) "
-echo " * sambamba: $(readlink -f $(which $sambamba_bin)) "
-echo " * sambamba version: $($sambamba_bin 2>&1 | grep -m 1 'sambamba') "
 echo " * samtools: $(readlink -f $(which samtools)) "
 echo " * samtools version: $(samtools --version | head -1) "
 echo " * bowtie2 ref: $ref_bowtie2 "
@@ -193,13 +193,19 @@ echo "READS CHR M: $reads_chrM"
 
 #########################
 
+module purge 
+
+source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Contains sambamba
+
+echo " * sambamba: $(readlink -f $(which $sambamba_bin)) "
+echo " * sambamba version: $($sambamba_bin 2>&1 | grep -m 1 'sambamba') "
 
 # filter and sort BAM
 
 bash_cmd="
 cat $unfiltered_sam \
 | \
-$sambamba_bin view \
+sambamba view \
 --sam-input \
 --nthreads $threads \
 --filter \"mapping_quality >= 30 and ref_name != 'chrM'\" \
@@ -207,7 +213,7 @@ $sambamba_bin view \
 --compression-level 0 \
 /dev/stdin \
 | \
-$sambamba_bin sort \
+sambamba sort \
 --nthreads $threads \
 --memory-limit 8GB \
 --out $bam \
@@ -216,7 +222,7 @@ $sambamba_bin sort \
 echo "CMD: $bash_cmd"
 eval "$bash_cmd"
 
-rm -fv "$unfiltered_sam"
+#rm -fv "$unfiltered_sam"
 
 
 #########################
@@ -244,7 +250,7 @@ fi
 
 # run flagstat
 
-bash_cmd="$sambamba_bin flagstat $bam > $flagstat_txt"
+bash_cmd="sambamba flagstat $bam > $flagstat_txt"
 echo "CMD: $bash_cmd"
 eval "$bash_cmd"
 

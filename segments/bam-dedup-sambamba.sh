@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source ~/.bashrc # Needed for conda initialization
 
 # remove duplicates using sambamba
 
@@ -62,8 +63,8 @@ bam_dd_log="${dedup_logs_dir}/${sample}.log.txt"
 bam_dd_flagstat="${dedup_logs_dir}/${sample}.flagstat.txt"
 
 # unload all loaded modulefiles
-module purge
-module add default-environment
+#module purge
+#module add default-environment
 
 
 #########################
@@ -92,20 +93,18 @@ fi
 
 # sambamba markdup
 
-module add sambamba/0.6.8
-
-sambamba_bin="sambamba-0.6.8"
+source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Contains sambamba
 
 echo
-echo " * sambamba: $(readlink -f $(which $sambamba_bin)) "
-echo " * sambamba version: $($sambamba_bin 2>&1 | grep -m 1 'sambamba') "
+echo " * sambamba: $(readlink -f $(which sambamba)) "
+echo " * sambamba version: $(sambamba 2>&1 | grep -m 1 'sambamba') "
 echo " * BAM in: $bam "
 echo " * BAM out temp: $bam_dd_temp "
 echo " * BAM out final: $bam_dd_final "
 echo
 
 bash_cmd="
-$sambamba_bin markdup \
+sambamba markdup \
 --remove-duplicates \
 --nthreads $threads \
 --hash-table-size 525000 \
@@ -143,7 +142,7 @@ fi
 
 # run flagstat
 
-bash_cmd="$sambamba_bin flagstat $bam_dd_temp > $bam_dd_flagstat"
+bash_cmd="sambamba flagstat $bam_dd_temp > $bam_dd_flagstat"
 echo "CMD: $bash_cmd"
 eval "$bash_cmd"
 

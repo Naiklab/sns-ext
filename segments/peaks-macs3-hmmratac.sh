@@ -3,6 +3,7 @@
 
 # HMMRATAC peak calling for ATAC-seq data
 
+source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -85,9 +86,10 @@ blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.tx
 # MACS
 
 # MACS3 is part of condaenvs/2023/macs3 module
-#module add condaenvs/2023/macs3
 
-conda activate atac-star
+module purge
+module add macs/3.0.2
+source activate $MACS3_ENV # Contains sambamba
 
 echo
 echo " * MACS path: $(readlink -f $(which macs3)) "
@@ -139,8 +141,7 @@ fi
 
 
 # generate a blacklist-filtered BED file
-
-# module add bedtools/2.27.1
+module add bedtools/2.27.1
 
 # echo
 # echo " * bedtools path: $(readlink -f $(which bedtools)) "
@@ -214,11 +215,11 @@ echo "FRiP: $frip"
 
 # generate summary
 
-# num_peaks_unfiltered=$(cat "$peaks_file" | grep -v "type=gappedPeak" | wc -l)
-# echo "num peaks unfiltered: $num_peaks_unfiltered"
+num_peaks_unfiltered=$(cat "$peaks_file" | grep -v "type=gappedPeak" | wc -l)
+echo "num peaks unfiltered: $num_peaks_unfiltered"
 
-# num_peaks_filtered=$(cat "$peaks_bed" | wc -l)
-# echo "num peaks filtered: $num_peaks_filtered"
+num_peaks_filtered=$(cat "$peaks_bed" | wc -l)
+echo "num peaks filtered: $num_peaks_filtered"
 
 num_peaks=$(cat "$peaks_bed" | wc -l)
 echo "num peaks: $num_peaks"

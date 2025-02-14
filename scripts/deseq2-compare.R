@@ -43,7 +43,7 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
     if (length(samples_comp) < 2) stop("no samples in group")
   } else {
     # not tested in combination with lfcShrink
-    res = results(deseq_dataset, name = name, cooksCutoff = FALSE, addMLE = TRUE)
+    res = results(deseq_dataset, name = name, cooksCutoff = FALSE, addMLE = TRUE,, cooksCutoff = FALSE)
     res_name = name
     pos_label = "Pos"
     neg_label = "Neg"
@@ -72,7 +72,19 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
   res_unshrunk_tbl = as_tibble(res_unshrunk, rownames = "gene")
   res_unshrunk_tbl = dplyr::select(res_unshrunk_tbl, gene, log2FCunshrunk = log2FoldChange)
   res_tbl = left_join(res_tbl, res_unshrunk_tbl, by = "gene") %>% dplyr::arrange(padj, pvalue, desc(baseMean))
+  
+  # Extract Cook’s distance matrix
+  cooks <- assays(deseq_dataset)[["cooks"]]
 
+  # Identify genes where any sample exceeds a defined cutoff
+  max_cooks <- apply(cooks, 1, max, na.rm = TRUE)
+  cooks_threshold <- quantile(max_cooks, 0.95)  # Custom threshold
+
+  # Filter out outlier genes
+  outlier_genes <- names(max_cooks[max_cooks > cooks_threshold])
+  res_tbl <- res_tbl[!res_tbl$gene %in% outlier_genes, ]
+  res_tbl <- res_tbl[order(res_tbl$padj, res_tbl$pvalue, -res_tbl$baseMean), ]
+  
   # format results for excel export
   res_clean_tbl =
     res_tbl %>%
@@ -89,7 +101,15 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
   message("num genes padj<0.20: ", nrow(subset(res_tbl, padj < 0.2)))
   message("num genes padj<0.05: ", nrow(subset(res_tbl, padj < 0.05)))
   message("num genes padj<0.01: ", nrow(subset(res_tbl, padj < 0.01)))
+  
+  # Extract Cook’s distance matrix
+  cooks <- assays(deseq_dataset)[["cooks"]]
 
+  # Identify genes where any sample exceeds a defined cutoff
+  max_cooks <- apply(cooks, 1, max, na.rm = TRUE)
+  cooks_threshold <- quantile(max_cooks, 0.99)  # Remove outlier genes with Cook’s distance > 0.99 quantile 
+
+  
   # save differential expression results in Excel format
   res_xlsx = glue("dge.{file_suffix}.xlsx")
   write_xlsx(setNames(list(res_clean_tbl), strtrim(res_name, 31)), res_xlsx)
@@ -103,6 +123,8 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
   write_xlsx(setNames(list(res_padj005_df), strtrim(res_name, 31)), res_padj005_xlsx)
   message("save filtered results xlsx: ", res_padj005_xlsx)
   Sys.sleep(1)
+  
+  
 
   # generate volcano plot
   n_genes_labeled = 10
@@ -131,10 +153,10 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
   hmg[[length(hmg) + 1]] = list(genes = res_tbl %>% head(50) %>% pull(gene),
                                 title = "50 Most Significant",
                                 file_suffix = "top")
-  hmg[[length(hmg) + 1]] = list(genes = res_tbl %>% head(100) %>% pull(gene),
+  hmg[[length(hmg) + 1]] = list(genes =res_tbl%>% head(100) %>% pull(gene),
                                 title = "100 Most Significant",
                                 file_suffix = "top")
-  hmg[[length(hmg) + 1]] = list(genes = res_tbl %>% head(1000) %>% pull(gene),
+  hmg[[length(hmg) + 1]] = list(genes =res_tbl %>% head(1000) %>% pull(gene),
                                 title = "1000 Most Significant",
                                 file_suffix = "top")
   hmg[[length(hmg) + 1]] = list(genes = res_tbl %>% dplyr::filter(padj < 0.10) %>% pull(gene),

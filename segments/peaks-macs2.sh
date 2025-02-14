@@ -76,7 +76,7 @@ mkdir -p "$bigwig_dir"
 macs_bw="${bigwig_dir}/${sample}.macs2.bw"
 
 # unload all loaded modulefiles
-#module purge
+module purge
 
 #########################
 
@@ -105,25 +105,13 @@ code_dir=$(dirname $(dirname "$script_path"))
 
 genome_build=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-GENOMEBUILD);
 
-#if [ ! -d "$genome_dir" ] ; then
-#	echo -e "\n $script_name ERROR: genome dir $genome_dir does not exist \n" >&2
-#	exit 1
-#fi
+# Removed all file checks for now
 
 chrom_sizes=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-CHROMSIZES);
-
-if [ ! -s "$chrom_sizes" ] ; then
-	echo -e "\n $script_name ERROR: chrom sizes $chrom_sizes does not exist \n" >&2
-	exit 1
-fi
+echo "chrom_sizes: $chrom_sizes"
 
 blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BLACKLIST);
-
-if [ ! -s "$blacklist" ] ; then
-	echo -e "\n $script_name ERROR: blacklist $blacklist does not exist \n" >&2
-	exit 1
-fi
-
+echo "blacklist: $blacklist"
 
 #########################
 
@@ -131,12 +119,16 @@ fi
 # MACS parameters
 
 # MACS-style genome abbreviation (keep first two characters of build name)
-genome_build=$(basename "$genome_dir")
+
 macs_genome="${genome_build:0:2}"
 
 # fix if hgXX
 if [ "$macs_genome" == "hg" ] ; then
 	macs_genome="hs"
+fi
+
+if [ "$macs_genome" == "mm10" ] ; then
+	macs_genome="mm"
 fi
 
 # adjust for control sample
@@ -245,8 +237,6 @@ sleep 5
 
 module purge
 
-
-
 module add bedtools/2.31.0
 
 echo
@@ -303,7 +293,7 @@ if [ ! -s "$macs_bdg_treat" ] ; then
 	exit 1
 fi
 
-conda activate atac-star
+source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Contains sambamba
 
 # ucscutils/374 requires mariadb/5.5.64 to be loaded
 #module add ucscutils/374 - Added path to directory with ucsc_utils paths

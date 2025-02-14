@@ -42,7 +42,7 @@ if [ ! -d "$proj_dir" ] ; then
 	exit 1
 fi
 
-genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR);
+genome_build=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-GENOMEBUILD);
 
 # No directory checks needed for Minerva
 #if [ ! -d "$genome_dir" ] ; then
@@ -171,7 +171,7 @@ sleep 5
 echo -e "\n ========== start analysis ========== \n"
 
 # extract the genome build from the genome dir
-genome_build=$(basename "$genome_dir")
+genome_build=$(basename "$genome_build")
 
 echo
 echo " * genome: $genome_build "

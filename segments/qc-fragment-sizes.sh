@@ -125,7 +125,7 @@ fi
 # summary
 
 # "montage" is part of ImageMagick
-module add imagemagick/7.0.8
+module add imagemagick/7.0.8-47
 
 # combine charts into a single png
 
