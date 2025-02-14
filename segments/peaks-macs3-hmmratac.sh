@@ -76,20 +76,8 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
-genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR);
-
-if [ ! -d "$genome_dir" ] ; then
-	echo -e "\n $script_name ERROR: genome dir $genome_dir does not exist \n" >&2
-	exit 1
-fi
 
 blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BLACKLIST);
-
-if [ ! -s "$blacklist" ] ; then
-	echo -e "\n $script_name ERROR: blacklist $blacklist does not exist \n" >&2
-	exit 1
-fi
-
 
 #########################
 
@@ -167,13 +155,13 @@ fi
 # MACS3 score, signalValue, pValue, and qValue are always set to 0
 
 # keep only peaks that do not overlap blacklist regions
-# bash_cmd="
-# cut -f 1,2,3,4 $peaks_file \
-# | grep -v 'type=gappedPeak' \
-# | bedtools intersect -v -a stdin -b $blacklist \
-# | LC_ALL=C sort -k1,1 -k2,2n \
-# > $peaks_bed
-# "
+bash_cmd="
+ cut -f 1,2,3,4 $peaks_file \
+ | grep -v 'type=gappedPeak' \
+ | bedtools intersect -v -a stdin -b $blacklist \
+ | LC_ALL=C sort -k1,1 -k2,2n \
+ > $peaks_bed
+ "
 
 bash_cmd="
 cut -f 1,2,3,4 $peaks_file \

@@ -5,8 +5,6 @@
 
 source ~/.bashrc  # Reload the bashrc file
 
-conda activate rna-star
-
 # script filename
 script_path="${BASH_SOURCE[0]}"
 script_name=$(basename "$script_path")
@@ -78,7 +76,7 @@ mkdir -p "$bigwig_dir"
 macs_bw="${bigwig_dir}/${sample}.macs2.bw"
 
 # unload all loaded modulefiles
-module purge
+#module purge
 
 #########################
 
@@ -105,12 +103,12 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
-genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR);
+genome_build=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-GENOMEBUILD);
 
-if [ ! -d "$genome_dir" ] ; then
-	echo -e "\n $script_name ERROR: genome dir $genome_dir does not exist \n" >&2
-	exit 1
-fi
+#if [ ! -d "$genome_dir" ] ; then
+#	echo -e "\n $script_name ERROR: genome dir $genome_dir does not exist \n" >&2
+#	exit 1
+#fi
 
 chrom_sizes=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-CHROMSIZES);
 
@@ -220,7 +218,7 @@ fi
 # generate an image about the model based on the data
 # --nomodel will bypass building the shifting model
 
-module add r/4.1.2
+module add R/4.2.0
 
 if [ -s "$model_r" ] ; then
 
@@ -246,6 +244,9 @@ sleep 5
 # generate a blacklist-filtered BED file
 
 module purge
+
+
+
 module add bedtools/2.31.0
 
 echo
@@ -301,6 +302,8 @@ if [ ! -s "$macs_bdg_treat" ] ; then
 	echo -e "\n $script_name ERROR: bedGraph $macs_bdg_treat not generated \n" >&2
 	exit 1
 fi
+
+conda activate atac-star
 
 # ucscutils/374 requires mariadb/5.5.64 to be loaded
 #module add ucscutils/374 - Added path to directory with ucsc_utils paths

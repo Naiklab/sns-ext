@@ -80,7 +80,7 @@ flagstat_txt="${logs_dir}/${sample}.flagstat.txt"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -121,9 +121,6 @@ fi
 
 module add bowtie2/2.3.4.1
 module add samtools/1.9
-module add sambamba/0.6.8
-
-sambamba_bin="sambamba-0.6.8"
 
 echo
 echo " * bowtie2: $(readlink -f $(which bowtie2)) "

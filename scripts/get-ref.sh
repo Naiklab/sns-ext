@@ -1,93 +1,67 @@
 #!/bin/bash
 
-
 ##
 ## get reference of specified type for specified genome
 ##
-
 
 # script filename
 script_name=$(basename "${BASH_SOURCE[0]}")
 
 # check for correct number of arguments
-if [ ! $# == 2 ] ; then
+if [ $# -ne 1 ] ; then
 	echo -e "\n $script_name ERROR: WRONG NUMBER OF ARGUMENTS SUPPLIED \n" >&2
-	echo -e "\n USAGE: $script_name genome_dir ref_type \n" >&2
+	echo -e "\n USAGE: $script_name ref_type \n" >&2
 	exit 1
 fi
 
 # arguments
-genome_root=$1
-ref_type=$2
-
+ref_type=$1
 
 #########################
 
-
 function find_file {
-
 	local file_name=$1
 
 	# find the shortest result
-	local result=$(find -L "$genome_root" -type f -name "$file_name" | awk '{ print length, $0 }' | sort -n | cut -d " " -f 2 | head -1)
+	local result=$(find -L "$(dirname "$file_name")" -type f -name "$(basename "$file_name")" -printf '%s %p\n' | sort -n | head -1 | cut -d ' ' -f 2-)
 
 	if [ -s "$result" ] && [ "$result" ] ; then
-		echo $(readlink -f "$result")
+		echo "$(readlink -f "$result")"
 	else
 		echo -e "\n $script_name ERROR: $file_name RESULT $result DOES NOT EXIST \n" >&2
 		exit 1
 	fi
-
 }
 
 function find_dir {
-
 	local dir_name=$1
 
-	local result=$(find -L "$genome_root" -type d -iname "$dir_name")
+	local result=$(find -L "$(dirname "$dir_name")" -type d -iname "$(basename "$dir_name")" | awk '{ print length, $0 }' | sort -n | cut -d " " -f 2 | head -1)
 
 	if [ -s "$result" ] && [ "$result" ] ; then
-		echo $(readlink -f "$result")
+		echo "$(readlink -f "$result")"
 	else
 		echo -e "\n $script_name ERROR: $dir_name RESULT $result DOES NOT EXIST \n" >&2
 		exit 1
 	fi
-
 }
 
 function find_basename {
-
 	local suffix=$1
 
 	# find the shortest result
-	local result=$(find -L "$genome_root" -type f -name "genome${suffix}" | awk '{ print length, $0 }' | sort -n | cut -d " " -f 2 | head -1)
+	local result=$(find -L "$(dirname "$ref_type")" -type f -name "$(basename "$ref_type")${suffix}" -printf '%s %p\n' | sort -n | cut -d ' ' -f 2- | head -1)
 
 	if [ -s "$result" ] && [ "$result" ] ; then
 		result=$(readlink -f "$result")
 		echo ${result/${suffix}/}
 	else
-		echo -e "\n $script_name ERROR: genome${suffix} RESULT $result DOES NOT EXIST \n" >&2
+		echo -e "\n $script_name ERROR: $(basename "$ref_type")${suffix} RESULT $result DOES NOT EXIST \n" >&2
 		exit 1
 	fi
-
 }
 
-
 #########################
-
-# Excluded check for genome root, not needed in this context
-# genome root
-
-
-#if [ ! -d "$genome_root" ] ; then
-#	echo -e "\n $script_name ERROR: DIR $genome_root DOES NOT EXIST \n" >&2
-#	exit 1
-#fi
-
-
-#########################
-
-
 # file references
 
 if [ "$ref_type" == "FASTA" ] ; then
@@ -123,9 +97,8 @@ if [ "$ref_type" == "RRNAINTERVALLIST" ] ; then
 fi
 
 if [ "$ref_type" == "BLACKLIST" ] ; then
-	find_file blacklist.bed
+	find_basename blacklist.bed
 fi
-
 
 # directory references
 
@@ -145,7 +118,6 @@ if [ "$ref_type" == "SALMON" ] ; then
 	find_dir salmon
 fi
 
-
 # basename (file without suffix) references
 
 if [ "$ref_type" == "BOWTIE1" ] ; then
@@ -160,9 +132,6 @@ if [ "$ref_type" == "BWA" ] ; then
 	echo "$(find_basename .fa.bwt).fa"
 fi
 
-
 #########################
-
-
 
 # end
