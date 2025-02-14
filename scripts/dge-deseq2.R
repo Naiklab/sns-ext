@@ -155,6 +155,10 @@ message(" ========== normalize ========== ")
 dds = DESeqDataSetFromMatrix(countData = counts_table, colData = groups_table, design = design_formula)
 dds = DESeq(dds, parallel = FALSE)
 
+# Filter gene lengths to include only genes present in rownames(dds)
+gene_lengths = gene_lengths[rownames(dds)]
+
+# NOT GENERATING FPKM COUNTS HERE, ONLY NORMALIZED COUNTS
 # add gene lengths (used to generate FPKM values)
 if (identical(sort(names(gene_lengths)), sort(rownames(dds)))) {
   mcols(dds)$basepairs = gene_lengths[rownames(dds)]
