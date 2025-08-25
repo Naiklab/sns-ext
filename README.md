@@ -1,17 +1,120 @@
+# SNS-EXT: Seq-N-Slide Extended for Minerva HPC
 
-# Seq-N-Slide: sequencing data analysis pipelines (Minerva version)
-![alt text](https://img.freepik.com/premium-vector/athena-goddess-line-art-style-logo_440600-1385.jpg?w=1380)
+![Athena Logo](https://img.freepik.com/premium-vector/athena-goddess-line-art-style-logo_440600-1385.jpg?w=1380)
 
-This repo serves as an alternative version to the original Seq-n-Slide pipeline, with code modified to work with Mount Sinai's Minerva (LSF based) HPC system.
+A specialized adaptation of the Seq-N-Slide (SNS) pipeline optimized for Mount Sinai's Minerva High Performance Computing (HPC) environment with LSF job scheduling.
 
+## Overview
 
+SNS-EXT provides automated workflows for common Illumina sequencing-based protocols, including:
 
-LINKs for the orignal repo below:
+- **RNA-seq**: Differential gene expression analysis
+- **ChIP-seq**: Chromatin immunoprecipitation sequencing
+- **ATAC-seq**: Assay for transposase-accessible chromatin
+- **WGBS/RRBS**: Whole genome and reduced representation bisulfite sequencing
+- **WES/WGS**: Whole exome/genome variant detection
+- **Species identification**: Contaminant screening and quality control
 
-Github Link:(https://github.com/igordot/sns/tree/main)
-[![DOI](https://zenodo.org/badge/66501450.svg)](https://zenodo.org/badge/latestdoi/66501450)
+## Key Features
 
-Automated workflows for common sequencing-based (Illumina) protocols, such as RNA-seq, ChIP-seq, ATAC-seq, WGBS/RRBS methylation, whole genome/exome/targeted variant detection, and contaminant screening.
+- ✅ **Minerva-optimized**: Configured for LSF job scheduler and Minerva-specific resources
+- ✅ **Modular design**: Individual segments for flexible workflow construction
+- ✅ **Quality control**: Comprehensive QC metrics and reporting
+- ✅ **Standardized outputs**: Consistent file formats and directory structures
+- ✅ **Resource management**: Optimized memory and CPU allocation for HPC environment
 
-For more information, see the full documentation at https://igordot.github.io/sns
-(*The commands from the original version will remain unchanged)
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Naiklab/sns-ext.git
+cd sns-ext
+
+# Make scripts executable
+chmod +x run generate-settings gather-fastqs
+chmod +x routes/*.sh
+chmod +x segments/*.sh
+chmod +x scripts/*.sh
+```
+
+## Quick Start
+
+1. **Generate project settings**:
+
+   ```bash
+   ./generate-settings
+   ```
+
+2. **Gather FASTQ files**:
+
+   ```bash
+   ./gather-fastqs /path/to/fastq/directory
+   ```
+
+3. **Run analysis pipeline**:
+
+   ```bash
+   ./run [route] [sample-name]
+   ```
+
+## Available Routes
+
+| Route | Description |
+|-------|-------------|
+| `rna-star` | RNA-seq with STAR alignment |
+| `rna-salmon` | RNA-seq with Salmon quantification |
+| `rna-rsem` | RNA-seq with RSEM quantification |
+| `chip` | ChIP-seq analysis |
+| `atac` | ATAC-seq analysis |
+| `wgbs` | Whole genome bisulfite sequencing |
+| `rrbs` | Reduced representation bisulfite sequencing |
+| `wes` | Whole exome sequencing |
+| `species` | Species identification and contamination screening |
+
+## Directory Structure
+
+```text
+sns-ext/
+├── routes/           # Main analysis workflows
+├── segments/         # Individual processing steps
+├── scripts/          # Utility and analysis scripts
+├── run              # Main execution script
+├── generate-settings # Project configuration utility
+└── gather-fastqs    # FASTQ file organization utility
+```
+
+## Configuration
+
+The pipeline uses a settings file to configure analysis parameters. Key settings include:
+
+- Reference genome paths
+- Tool-specific parameters
+- Resource allocation (memory, CPU)
+- Output directory structure
+
+## Dependencies
+
+- LSF job scheduler (Minerva HPC)
+- Standard bioinformatics tools (STAR, Salmon, MACS2, etc.)
+- R with required packages
+- Python with necessary libraries
+
+## Original SNS Pipeline
+
+This project is based on the original Seq-N-Slide pipeline:
+
+**GitHub**: [igordot/sns](https://github.com/igordot/sns)  
+**Documentation**: [https://igordot.github.io/sns](https://igordot.github.io/sns)  
+**DOI**: [![DOI](https://zenodo.org/badge/66501450.svg)](https://zenodo.org/badge/latestdoi/66501450)
+
+## Citation
+
+If you use SNS-EXT in your research, please cite both this adaptation and the original SNS pipeline.
+
+## License
+
+See [LICENSE](LICENSE) file for details.
+
+## Support
+
+For issues specific to the Minerva adaptation, please open an issue in this repository. For general SNS questions, refer to the [original documentation](https://igordot.github.io/sns).
