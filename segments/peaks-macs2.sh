@@ -293,7 +293,8 @@ if [ ! -s "$macs_bdg_treat" ] ; then
 	exit 1
 fi
 
-source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Contains sambamba
+# Pixi environment: atac
+# Use: pixi run -e atac <command> # Contains sambamba
 
 # ucscutils/374 requires mariadb/5.5.64 to be loaded
 #module add ucscutils/374 - Added path to directory with ucsc_utils paths

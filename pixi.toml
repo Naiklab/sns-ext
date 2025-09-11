@@ -1,0 +1,97 @@
+[project]
+name = "sns-ext"
+version = "1.0.0"
+description = "Seq-N-Slide Extended for Minerva HPC - Pixi Environment"
+authors = ["Ikjot Sidhu <ikjot.sidhu@mssm.edu>", "Igor Dolgalev"]
+channels = ["conda-forge", "bioconda", "nodefaults"]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
+
+[tasks]
+# Environment activation tasks for different analysis types
+activate-atac = "echo 'ATAC-seq environment ready'"
+activate-rna = "echo 'RNA-seq environment ready'"
+activate-deeptools = "echo 'DeepTools environment ready'"
+activate-macs3 = "echo 'MACS3 environment ready'"
+
+# Analysis pipeline tasks
+run-pipeline = "echo 'Run SNS-EXT pipeline with: ./run [route] [sample-name]'"
+setup-project = "echo 'Generate settings with: ./generate-settings'"
+gather-fastqs = "echo 'Gather FASTQ files with: ./gather-fastqs [directory]'"
+
+[dependencies]
+# Core system tools
+dos2unix = "*"
+imagemagick = "*"
+perl = "*"
+
+# Basic bioinformatics tools
+samtools = "*"
+bedtools = "*"
+fastqc = "*"
+
+[feature.atac.dependencies]
+# ATAC-seq specific tools
+bowtie2 = "*"
+sambamba = "*"
+macs2 = "*"
+picard = "*"
+
+[feature.rna.dependencies]
+# RNA-seq specific tools
+star = "*"
+salmon = "*"
+rsem = "*"
+subread = "*"
+fastq-screen = "*"
+
+[feature.deeptools.dependencies]
+# Visualization and BigWig tools
+deeptools = "*"
+pybigwig = "*"
+
+[feature.macs3.dependencies]
+# Peak calling with MACS3
+macs3 = "*"
+
+[feature.quality-control.dependencies]
+# Quality control tools
+fastqc = "*"
+multiqc = "*"
+fastq-screen = "*"
+
+[feature.variant-calling.dependencies]
+# Variant calling tools
+gatk4 = "*"
+bcftools = "*"
+bwa = "*"
+lofreq = "*"
+
+[feature.methylation.dependencies]
+# Bisulfite sequencing tools
+bismark = "*"
+trim-galore = "*"
+trimmomatic = "*"
+
+[feature.r-analysis.dependencies]
+# R and statistical analysis
+r-base = "*"
+r-deseq2 = "*"
+r-ggplot2 = "*"
+r-dplyr = "*"
+r-readr = "*"
+r-pheatmap = "*"
+
+[environments]
+# Default environment with core tools
+default = {features = ["quality-control"], solve-group = "default"}
+
+# Specialized environments for different analysis types
+atac = {features = ["atac", "quality-control"], solve-group = "atac"}
+rna = {features = ["rna", "quality-control", "r-analysis"], solve-group = "rna"}
+deeptools = {features = ["deeptools"], solve-group = "deeptools"}
+macs3 = {features = ["macs3"], solve-group = "macs3"}
+methylation = {features = ["methylation", "quality-control"], solve-group = "methylation"}
+variant-calling = {features = ["variant-calling", "quality-control"], solve-group = "variant-calling"}
+
+# Comprehensive environment with all tools (for development)
+complete = {features = ["atac", "rna", "deeptools", "macs3", "quality-control", "variant-calling", "methylation", "r-analysis"], solve-group = "complete"}

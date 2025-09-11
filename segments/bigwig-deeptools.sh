@@ -72,7 +72,8 @@ fi
 
 #no module for deeptools/3.5.1 exists in Minerva
 # Loading the conda environment 
-source activate /sc/arion/projects/naiklab/ikjot/conda_envs/deeptools
+# Pixi environment: deeptools
+# Use: pixi run -e deeptools <command>
 
 # check that the binary is found
 if [ ! -x "$(command -v deeptools)" ]; then

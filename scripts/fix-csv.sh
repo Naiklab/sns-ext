@@ -5,7 +5,8 @@
 ## make csv file more compatible with various tools by removing problematic characters
 ##
 source ~/.bashrc  # Reload the bashrc file
-conda activate /sc/arion/projects/naiklab/ikjot/conda_envs/rna-star # Contains dos2unix
+# Pixi environment: rna
+# Use: pixi run -e rna <command> # Contains dos2unix
 
 # script filename
 script_name=$(basename "${BASH_SOURCE[0]}")

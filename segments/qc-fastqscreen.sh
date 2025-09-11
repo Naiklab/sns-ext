@@ -89,7 +89,8 @@ fi
 #module add imagemagick/7.0.8 - Not available in Minerva
 
 # Activate environment
-conda activate rna-star || { echo "Failed to activate RNA-star conda environment"; exit 1; } # Conda environment for fastq_screen and imagemagick
+# Pixi environment: rna
+# Use: pixi run -e rna <command> || { echo "Failed to activate rna pixi environment"; exit 1; } # Conda environment for fastq_screen and imagemagick
 
 
 bowtie2_bin=$(cat "$fastqscreen_conf" | grep "^BOWTIE2" | head -1 | tr '[:space:]' '\t' | tr -s '\t' | cut -f 2)

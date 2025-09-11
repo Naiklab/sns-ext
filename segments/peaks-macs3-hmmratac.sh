@@ -89,7 +89,8 @@ blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.tx
 
 module purge
 module add macs/3.0.2
-source activate $MACS3_ENV # Contains sambamba
+# Pixi environment: macs3
+# Use: pixi run -e macs3 <command>
 
 echo
 echo " * MACS path: $(readlink -f $(which macs3)) "
