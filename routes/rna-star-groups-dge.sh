@@ -149,7 +149,8 @@ echo -e "\n ========== test R environment ========== \n"
 
 # load relevant modules
 
-module load R/4.4.1
+#module load R/4.4.1
+source activate /sc/arion/projects/naiklab/ikjot/conda_envs/r_env
 
 echo
 echo " * R: $(readlink -f $(which R)) "
