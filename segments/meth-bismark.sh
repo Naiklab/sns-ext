@@ -55,7 +55,7 @@ bismark_cpg_report_gz="${bismark_meth_dir}/${sample}.CpG_report.txt.gz"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -85,6 +85,9 @@ if [ ! -s "$bismark_bam" ] ; then
 fi
 
 code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 ref_bismark=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BISMARK);
 
@@ -126,7 +129,7 @@ fi
 # bismark_methylation_extractor
 
 # bismark/0.22.1 loads bowtie2 and samtools (no version specified)
-module add bismark/0.22.1
+#module add bismark/0.22.1
 
 # navigate to the output dir
 mkdir -p "$bismark_meth_dir"
@@ -233,7 +236,7 @@ $CMD
 
 # convert bedgraph to bigwig
 
-module add ucscutils/374
+#module add ucscutils/374
 
 bigwig_dir="${proj_dir}/BIGWIG-Bismark"
 bigwig="${bigwig_dir}/${sample}.bw"

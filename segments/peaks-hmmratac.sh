@@ -49,7 +49,7 @@ summits_bed_original="${hmmratac_logs_dir}/${sample}_summits.bed"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -73,6 +73,9 @@ if [ ! -s "${bam}.bai" ] ; then
 fi
 
 code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 chrom_sizes=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-CHROMSIZES);
 
@@ -187,7 +190,7 @@ eval "$bash_cmd"
 
 # generate padded summits files to call differentially accessible peaks
 # https://github.com/LiuLabUB/HMMRATAC/issues/40
-module add bedtools/2.27.1
+#module add bedtools/2.27.1
 bash_cmd="bedtools slop -i $summits_bed_final -g $chrom_sizes -b 50 > $summits_bed_padded"
 echo -e "\n CMD: $bash_cmd \n"
 eval "$bash_cmd"
@@ -222,7 +225,7 @@ fi
 # "ENCODE Consortium scrutinizes experiments in which the FRiP falls below 1%"
 # ENCODE ATAC-seq Data Standards: ">0.3, though values greater than 0.2 are acceptable"
 
-module add samtools/1.16
+#module add samtools/1.16
 
 echo
 echo " * samtools: $(readlink -f $(which samtools))"

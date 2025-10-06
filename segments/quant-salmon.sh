@@ -49,7 +49,7 @@ salmon_quant_json="${salmon_logs_dir}/lib_format_counts.json"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -79,6 +79,9 @@ if [ ! -s "$fastq_R1" ] ; then
 fi
 
 code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 gtf=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-GTF);
 
@@ -260,7 +263,7 @@ num_active_samples=$(find "$salmon_proj_logs_dir" -type d -name "aux_info" | wc 
 if [[ "$num_active_samples" -lt 3 && "$merged_counts_rds" -ot "${salmon_quant_dir}/${sample}.quant.sf.gz" ]] ; then
 
 	# load relevant modules
-	module add r/4.1.2
+#module add r/4.1.2
 
 	echo
 	echo " * R: $(readlink -f $(which R)) "

@@ -42,6 +42,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 ref_fasta=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-FASTA)
 
 if [ ! -s "$ref_fasta" ] ; then
@@ -125,7 +128,7 @@ cat $bed \
 "
 
 if [ ! -s "$bed_padded" ] ; then
-	module add bedtools/2.27.1
+	#module add bedtools/2.27.1
 	echo -e "\n CMD: $bed_pad_cmd \n"
 	eval "$bed_pad_cmd"
 	sleep 5
@@ -191,7 +194,7 @@ fi
 # "you can just add fake columns"
 # http://csb5.github.io/lofreq/2015/11/23/where-are-the-format-and-sample-fields/
 
-module add python/cpu/2.7.15
+#module add python/cpu/2.7.15
 
 echo
 echo " * lofreq2_add_fake_gt.py: $(readlink -f $(which $lofreq_gt_py)) "
@@ -231,8 +234,8 @@ fi
 
 # adjust the vcf for annovar compatibility (http://www.openbioinformatics.org/annovar/annovar_vcf.html)
 
-module add htslib/1.9
-module add samtools/1.9
+#module add htslib/1.9
+#module add samtools/1.9
 
 echo
 echo " * samtools: $(readlink -f $(which samtools)) "

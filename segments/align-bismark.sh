@@ -43,6 +43,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 ref_bismark=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BISMARK);
 
 if [ ! -d "$ref_bismark" ] || [ ! "$ref_bismark" ] ; then
@@ -95,7 +98,7 @@ bismark_nucstats_original="${bismark_logs_dir}/${bismark_id}${suffix_nucstats}"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -118,7 +121,7 @@ fi
 # bismark can't use sorted bam at the next step, but other tools may need sorted bam
 
 # bismark/0.22.1 loads bowtie2 and samtools (no version specified)
-module add bismark/0.22.1
+#module add bismark/0.22.1
 
 # "In order to work properly the current working directory must contain the sequence files to be analysed" (as of v0.14)
 fastq_dir=$(dirname "$fastq_R1")

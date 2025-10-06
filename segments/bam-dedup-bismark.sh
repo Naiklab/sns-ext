@@ -69,7 +69,7 @@ bismark_dd_report_original="${bismark_dd_logs_dir}/${sample}.deduplication_repor
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -90,7 +90,7 @@ fi
 # run deduplicate_bismark
 
 # bismark/0.22.1 loads bowtie2 and samtools (no version specified)
-module add bismark/0.22.1
+#module add bismark/0.22.1
 
 echo
 echo " * Bismark: $(readlink -f $(which deduplicate_bismark)) "

@@ -41,6 +41,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 ref_fasta=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-FASTA);
 
 if [ ! -s "$ref_fasta" ] ; then
@@ -80,7 +83,7 @@ bam_split="${bam_split_dir}/${bam_base}.bam"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -100,7 +103,7 @@ fi
 
 # GATK settings
 
-module add r/3.6.1
+#module add r/3.6.1
 
 # command
 gatk_jar="/gpfs/data/igorlab/software/GenomeAnalysisTK/GenomeAnalysisTK-3.8-1/GenomeAnalysisTK.jar"
@@ -162,7 +165,7 @@ if [ ! -s "$bed" ] ; then
 
 	echo -e "\n $script_name : CREATING TARGETS BED FROM GTF EXONS \n" >&2
 
-	module add bedtools/2.27.1
+#module add bedtools/2.27.1
 
 	cat "$gtf" \
 	| awk -F $'\t' '$3 == "exon" && $5 > $4' \

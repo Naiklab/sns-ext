@@ -42,6 +42,9 @@ if [ ! -s "$bam" ] || [ ! "$bam" ] ; then
 fi
 
 code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 gtf=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-GTF);
 
 #if [ ! -s "$gtf" ] || [ ! "$gtf" ] ; then
@@ -112,7 +115,7 @@ fi
 
 # featureCounts
 
-module add subread/1.6.3
+#module add subread/1.6.3
 
 # featureCounts generates temp files in the current directory
 cd "$fc_logs_dir"

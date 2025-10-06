@@ -47,6 +47,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR)
 
 if [ ! -d "$genome_dir" ] ; then
@@ -126,7 +129,7 @@ annot_cmd="bash ${code_dir}/segments/annot-regions-annovar.sh $proj_dir $sample 
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -204,11 +207,11 @@ fi
 # generate FREEC-compatible references
 
 # FREEC compiled with GCC 6.1.0 (load same GCC when running)
-module add gcc/6.1.0
+#module add gcc/6.1.0
 # bedtools to create .pileup files for WES data
-module add bedtools/2.27.1
+#module add bedtools/2.27.1
 # samtools to create .pileup files (for BAF) (even with sambamba enabled)
-module add samtools/1.3
+#module add samtools/1.3
 
 # clean up probes BED
 fix_probes_cmd="
@@ -447,8 +450,8 @@ rm -fv "$minipileup_control"
 
 # clean up the environment before loading R module to avoid GCC conflicts
 module purge
-module add default-environment
-module add r/3.6.1
+#module add default-environment
+#module add r/3.6.1
 
 echo
 echo " * R: $(readlink -f $(which R)) "

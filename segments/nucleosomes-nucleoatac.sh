@@ -124,7 +124,7 @@ fi
 
 # MACS is part of python/2.7.3 module
 module unload python
-module load python/2.7.3
+#module load python/2.7.3
 
 echo " * MACS: $(readlink -f $(which macs2)) "
 echo " * MACS version: $(macs2 --version 2>&1) "
@@ -170,7 +170,7 @@ fi
 
 # generate padded broad peaks bed file
 
-module load bedtools/2.26.0
+#module load bedtools/2.26.0
 
 bash_cmd="
 cut -f 1,2,3,4,7 $peaks_broad \
@@ -194,7 +194,7 @@ source /ifs/home/id460/.virtualenvs/nucleoatac/bin/activate
 
 # cython has issues with gcc 4.4
 module unload gcc
-module load gcc/6.1.0
+#module load gcc/6.1.0
 
 echo " * NucleoATAC: $(readlink -f $(which nucleoatac)) "
 echo " * NucleoATAC version: $(nucleoatac --version 2>&1 | grep 'version' | grep -v 'Command') "
@@ -219,7 +219,7 @@ deactivate
 
 # return to normal python environment
 module unload python
-module load python/2.7.3
+#module load python/2.7.3
 
 
 #########################
@@ -257,7 +257,7 @@ fi
 
 # convert bedGraphs to bigWigs for easier consumption
 
-module load kentutils/329
+#module load kentutils/329
 
 echo " * OCC bedGraph: $nucleoatac_occ_bg "
 echo " * OCC bigWig: $nucleoatac_occ_bw "

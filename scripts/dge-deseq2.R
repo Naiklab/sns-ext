@@ -18,7 +18,7 @@ options(java.parameters = "-Xmx8G")
 # get scripts directory (directory of this file) and load relevant functions
 args_all = commandArgs(trailingOnly = FALSE)
 scripts_dir = normalizePath(dirname(sub("^--file=", "", args_all[grep("^--file=", args_all)])))
-source(paste0(scripts_dir, "/load-install-packages.R"))
+# Note: load-install-packages.R not needed - using pixi environment packages directly
 source(paste0(scripts_dir, "/deseq2-pca.R"))
 source(paste0(scripts_dir, "/deseq2-compare.R"))
 source(paste0(scripts_dir, "/plot-volcano.R"))
@@ -43,9 +43,9 @@ if (!file.exists(groups_table_file)) stop("file does not exist: ", groups_table_
 r_dir = "r-data"
 if (!dir.exists(r_dir)) dir.create(r_dir)
 
-.libPaths(c("/sc/arion/projects/naiklab/ikjot/R", "/hpc/users/sidhui01/.Rlib"))
+# use pixi environment packages - no need to set custom library paths
+print(paste0("R library paths: ", paste(.libPaths(), collapse = "; ")))
 
-print(paste0("RlibPaths =",.libPaths()))
 # for general data manipulation
 library("magrittr")
 library("tibble")

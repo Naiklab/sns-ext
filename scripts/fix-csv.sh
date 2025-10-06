@@ -4,8 +4,6 @@
 ##
 ## make csv file more compatible with various tools by removing problematic characters
 ##
-source ~/.bashrc  # Reload the bashrc file
-conda activate /sc/arion/projects/naiklab/ikjot/conda_envs/rna-star # Contains dos2unix
 
 # script filename
 script_name=$(basename "${BASH_SOURCE[0]}")
@@ -29,9 +27,9 @@ fi
 # load module
 #module add dos2unix/7.4.0 - not available on Minerva
 
-# fix newlines
-dos2unix --quiet $csv
-mac2unix --quiet $csv
+# fix newlines (replace dos2unix and mac2unix with sed)
+sed -i 's/\r$//' $csv    # dos2unix equivalent
+sed -i 's/\r/\n/g' $csv  # mac2unix equivalent
 
 # replace commas inside quoted fields with dashes
 awk -F '"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", "-", $i) } 1' $csv > ${csv}.tmp && mv ${csv}.tmp $csv

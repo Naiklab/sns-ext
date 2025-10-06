@@ -48,7 +48,7 @@ bwa_flagstat="${bwa_logs_dir}/${sample}.flagstat.txt"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -89,6 +89,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 ref_bwa=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-BWA)
 
 if [ ! -s "$ref_bwa" ] || [ ! -n "$ref_bwa" ] ; then
@@ -102,8 +105,8 @@ fi
 
 # BWA
 
-module add bwa/0.7.17
-module add sambamba/0.6.8
+#module add bwa/0.7.17
+#module add sambamba/0.6.8
 
 sambamba_bin="sambamba-0.6.8"
 

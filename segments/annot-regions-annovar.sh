@@ -52,7 +52,7 @@ regions_table_fixed="${annovar_out_prefix}.in.txt"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -82,6 +82,9 @@ if [ ! -s "$regions_table" ] ; then
 fi
 
 code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 genome_dir=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" GENOME-DIR);
 

@@ -98,6 +98,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 ref_star=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-STAR)
 
 #if [ ! -s "${ref_star}/SA" ] ; then
@@ -111,8 +114,8 @@ ref_star=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.t
 
 # STAR
 
-module add samtools/1.9
-module add star/2.7.3a
+#module add samtools/1.9
+#module add star/2.7.3a
 
 echo
 echo " * STAR: $(readlink -f $(which STAR)) "

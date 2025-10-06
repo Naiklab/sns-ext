@@ -43,6 +43,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 ref_bowtie2=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BOWTIE2);
 
 if [ ! -s "${ref_bowtie2}.fa" ] ; then
@@ -75,7 +78,7 @@ flagstat_txt="${logs_dir}/${sample}.flagstat.txt"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -114,9 +117,9 @@ fi
 # step 3: sort BAM
 # to do: add Picard AddOrReplaceReadGroups for extra compatibility
 
-module add bowtie2/2.3.4.1
-module add samtools/1.9
-module add sambamba/0.6.8
+#module add bowtie2/2.3.4.1
+#module add samtools/1.9
+#module add sambamba/0.6.8
 
 sambamba_bin="sambamba-0.6.8"
 

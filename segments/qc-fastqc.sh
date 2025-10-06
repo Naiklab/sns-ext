@@ -73,7 +73,7 @@ fi
 
 # run FastQC
 
-module add fastqc/0.11.8
+#module add fastqc/0.11.8
 
 # check that the fastqc is found
 if [ ! -x "$(command -v fastqc)" ]; then

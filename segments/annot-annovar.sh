@@ -52,7 +52,7 @@ vcf_table="${annovar_out_prefix}.vcf.txt"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -82,6 +82,9 @@ if [ ! -s "$vcf_file" ] ; then
 fi
 
 code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 genome_dir=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" GENOME-DIR);
 
@@ -176,7 +179,7 @@ fi
 
 # extract variant info (quality, depth, frequency) from a VCF in a table format for merging with annotations
 
-module add r/3.6.1
+#module add r/3.6.1
 
 echo
 echo " * R: $(readlink -f $(which R)) "

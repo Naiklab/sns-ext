@@ -108,7 +108,7 @@ fi
 
 # RSEM
 
-module load bowtie2/2.2.6
+#module load bowtie2/2.2.6
 
 rsem_bin_dir="/ifs/home/id460/software/RSEM-1.2.31/bin"
 

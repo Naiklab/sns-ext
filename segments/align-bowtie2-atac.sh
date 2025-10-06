@@ -49,6 +49,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 ref_bowtie2=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BOWTIE2);
 
 #if [ ! -s "${ref_bowtie2}.1.bt2" ] ; then
@@ -121,8 +124,8 @@ fi
 # to do: add Picard AddOrReplaceReadGroups for extra compatibility
 #conda deactivate
 
-module add bowtie2/2.4.4
-module add samtools/1.9
+#module add bowtie2/2.4.4
+#module add samtools/1.9
 
 echo
 echo " * bowtie2: $(which bowtie2) "

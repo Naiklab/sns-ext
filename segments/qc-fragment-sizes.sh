@@ -71,13 +71,16 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 
 #########################
 
 
 # calculate and plot fragment size distribution
 
-module add R/4.1.0
+#module add R/4.1.0
 
 echo
 echo " * R: $(readlink -f $(which R)) "
@@ -125,7 +128,7 @@ fi
 # summary
 
 # "montage" is part of ImageMagick
-module add imagemagick/7.0.8-47
+#module add imagemagick/7.0.8-47
 
 # combine charts into a single png
 

@@ -70,6 +70,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 refflat=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-REFFLAT)
 
 rrna_interval_list=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-RRNAINTERVALLIST)
@@ -90,17 +93,18 @@ fi
 
 # run Picard CollectRnaSeqMetrics
 
-module load picard/2.18.4 
+#module load picard/2.18.4 
 # Picard requires R for some plotting
-module load R/4.4.1
+#module load R/4.4.1
 # ImageMagick for "montage" for combining plots
-module load imagemagick/7.0.8-47
+#module load imagemagick/7.0.8-47
 
-picard_jar="${PICARD_ROOT}/libs/picard.jar"
+# In pixi environment, picard is available as a command
+picard_cmd="picard"
 
-# check if the picard jar file is present
-if [ ! -s "$picard_jar" ] ; then
-	echo -e "\n $script_name ERROR: FILE $picard_jar DOES NOT EXIST \n" >&2
+# check if picard command is available
+if ! command -v picard &> /dev/null ; then
+	echo -e "\n $script_name ERROR: picard command not found in PATH \n" >&2
 	exit 1
 fi
 
@@ -109,7 +113,7 @@ fi
 # rev (rev comp of transcript) | fr-firststrand  | reverse | SECOND_READ |
 
 echo
-echo " * Picard: $picard_jar "
+echo " * Picard: $(which picard) "
 echo " * BAM: $bam "
 echo " * refFlat: $refflat "
 echo " * ribosomal intervals: $rrna_interval_list "
@@ -117,8 +121,8 @@ echo " * out TXT: $metrics_txt "
 echo " * out PDF: $metrics_pdf "
 echo
 
-picard_base_cmd="java -Xms8G -Xmx8G -jar $picard_jar CollectRnaSeqMetrics \
-VERBOSITY=WARNING QUIET=true VALIDATION_STRINGENCY=LENIENT MAX_RECORDS_IN_RAM=2500000 \
+picard_base_cmd="picard CollectRnaSeqMetrics \
+VERBOSITY=WARNING QUIET=true VALIDATION_STRINGENCY=LENIENT \
 REF_FLAT=${refflat} \
 INPUT=${bam}"
 

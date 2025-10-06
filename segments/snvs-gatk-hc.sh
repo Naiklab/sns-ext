@@ -42,6 +42,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 ref_fasta=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-FASTA)
 
 if [ ! -s "$ref_fasta" ] ; then
@@ -74,7 +77,7 @@ annot_cmd="bash ${code_dir}/segments/annot-annovar.sh $proj_dir $sample $vcf_fix
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -170,7 +173,7 @@ fi
 
 # adjust the vcf for annovar compatibility (http://www.openbioinformatics.org/annovar/annovar_vcf.html)
 
-module add samtools/1.9
+#module add samtools/1.9
 
 echo
 echo " * samtools: $(readlink -f $(which samtools)) "

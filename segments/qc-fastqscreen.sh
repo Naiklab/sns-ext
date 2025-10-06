@@ -2,7 +2,6 @@
 
 
 # run FastQ Screen
-source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -41,6 +40,9 @@ if [ ! -s "$fastq" ] ; then
 fi
 
 code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 fastqscreen_conf=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-FASTQSCREEN);
 
@@ -88,9 +90,7 @@ fi
 # ImageMagick for "montage" for combining plots
 #module add imagemagick/7.0.8 - Not available in Minerva
 
-# Activate environment
-conda activate rna-star || { echo "Failed to activate RNA-star conda environment"; exit 1; } # Conda environment for fastq_screen and imagemagick
-
+# Using pixi environment (fastq_screen and imagemagick available)
 
 bowtie2_bin=$(cat "$fastqscreen_conf" | grep "^BOWTIE2" | head -1 | tr '[:space:]' '\t' | tr -s '\t' | cut -f 2)
 

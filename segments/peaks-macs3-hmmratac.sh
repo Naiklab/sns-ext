@@ -77,6 +77,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 
 blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-BLACKLIST);
 
@@ -88,7 +91,7 @@ blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.tx
 # MACS3 is part of condaenvs/2023/macs3 module
 
 module purge
-module add macs/3.0.2
+#module add macs/3.0.2
 source activate $MACS3_ENV # Contains sambamba
 
 echo
@@ -141,7 +144,7 @@ fi
 
 
 # generate a blacklist-filtered BED file
-module add bedtools/2.27.1
+#module add bedtools/2.27.1
 
 # echo
 # echo " * bedtools path: $(readlink -f $(which bedtools)) "
@@ -193,7 +196,7 @@ fi
 # "ENCODE Consortium scrutinizes experiments in which the FRiP falls below 1%"
 # ENCODE ATAC-seq Data Standards: ">0.3, though values greater than 0.2 are acceptable"
 
-module add samtools/1.16
+#module add samtools/1.16
 
 echo
 echo " * samtools: $(readlink -f $(which samtools))"

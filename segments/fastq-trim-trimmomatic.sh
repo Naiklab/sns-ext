@@ -108,9 +108,10 @@ fi
 
 # Trimmomatic
 
-module load trimmomatic/0.36
+#module load trimmomatic/0.36  # Using pixi environment
 
-trimmomatic_jar="/hpc/packages/minerva-common/trimmomatic/0.36/trimmomatic-0.36.jar"
+# Use trimmomatic from pixi environment
+trimmomatic_jar="$(which trimmomatic)"
 
 # check if the trimmomatic jar file is present
 if [ ! -s "$trimmomatic_jar" ] ; then

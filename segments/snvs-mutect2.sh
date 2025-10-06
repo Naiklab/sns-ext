@@ -49,6 +49,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 genome_dir=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" GENOME-DIR)
 
 if [ ! -d "$genome_dir" ] ; then
@@ -106,7 +109,7 @@ annot_cmd="bash ${code_dir}/segments/annot-annovar.sh $proj_dir $sample $vcf_fix
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -162,8 +165,8 @@ fi
 # GATK Mutect2
 
 # GATK 4.4.0.0 requires Java 17
-module add jdk/17u028
-module add python/cpu/3.6.5
+#module add jdk/17u028
+#module add python/cpu/3.6.5
 
 # command
 gatk_bin="/gpfs/data/igorlab/software/GenomeAnalysisTK/gatk-4.4.0.0/gatk"
@@ -347,7 +350,7 @@ fi
 
 # adjust VCF for ANNOVAR compatibility (http://annovar.openbioinformatics.org/en/latest/articles/VCF/)
 
-module add samtools/1.9
+#module add samtools/1.9
 
 echo
 echo " * samtools: $(readlink -f $(which samtools)) "

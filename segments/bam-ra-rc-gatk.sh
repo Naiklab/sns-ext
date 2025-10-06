@@ -55,7 +55,7 @@ gatk_rc_pdf="${gatk_logs_dir}/${sample}.pdf"
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
+#module add default-environment
 
 
 #########################
@@ -110,6 +110,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 genome_dir=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" GENOME-DIR)
 
 if [ ! -d "$genome_dir" ] ; then
@@ -146,7 +149,7 @@ fi
 
 # GATK settings
 
-module add r/3.6.1
+#module add r/3.6.1
 
 # command
 gatk_jar="/gpfs/data/igorlab/software/GenomeAnalysisTK/GenomeAnalysisTK-3.8-1/GenomeAnalysisTK.jar"

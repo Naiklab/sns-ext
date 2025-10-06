@@ -93,7 +93,7 @@ if [ "$ref_type" == "FASTQSCREEN" ] ; then
 fi
 
 if [ "$ref_type" == "RRNAINTERVALLIST" ] ; then
-	find_file rRNA.interval_list
+	find_file /sc/arion/projects/naiklab/ikjot/reference_files/mm10/rRNA.interval_list
 fi
 
 if [ "$ref_type" == "BLACKLIST" ] ; then

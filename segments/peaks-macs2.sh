@@ -103,6 +103,9 @@ fi
 
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 genome_build=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-GENOMEBUILD);
 
 # Removed all file checks for now
@@ -157,7 +160,7 @@ fi
 # MACS
 
 # MACS is available on Minerva
-module add macs/2.1.0
+#module add macs/2.1.0
 
 echo
 echo " * MACS: $(readlink -f $(which macs2)) "
@@ -210,7 +213,7 @@ fi
 # generate an image about the model based on the data
 # --nomodel will bypass building the shifting model
 
-module add R/4.2.0
+#module add R/4.2.0
 
 if [ -s "$model_r" ] ; then
 
@@ -237,7 +240,7 @@ sleep 5
 
 module purge
 
-module add bedtools/2.31.0
+#module add bedtools/2.31.0
 
 echo
 echo " * bedtools: $(readlink -f $(which bedtools)) "
@@ -293,7 +296,7 @@ if [ ! -s "$macs_bdg_treat" ] ; then
 	exit 1
 fi
 
-source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Contains sambamba
+#source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Not needed any more since we are using pixi
 
 # ucscutils/374 requires mariadb/5.5.64 to be loaded
 #module add ucscutils/374 - Added path to directory with ucsc_utils paths
@@ -313,7 +316,7 @@ if [ ! -s "$macs_bw" ] ; then
 	echo -e "\n CMD: $bdg_sort_cmd \n"
 	eval "$bdg_sort_cmd"
 
-	bw_cmd="/sc/arion/projects/naiklab/ikjot/Utils/bedGraphToBigWig $macs_bdg_treat_sort $chrom_sizes $macs_bw"
+	bw_cmd="bedGraphToBigWig $macs_bdg_treat_sort $chrom_sizes $macs_bw"
 	echo -e "\n CMD: $bw_cmd \n"
 	eval "$bw_cmd"
 
@@ -333,7 +336,7 @@ rm -fv "$macs_bdg_control"
 # "ENCODE Consortium scrutinizes experiments in which the FRiP falls below 1%"
 # ENCODE ATAC-seq Data Standards: ">0.3, though values greater than 0.2 are acceptable"
 
-module add samtools/1.16
+#module add samtools/1.16
 
 echo
 echo " * samtools: $(readlink -f $(which samtools))"

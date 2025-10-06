@@ -94,8 +94,8 @@ fi
 
 # trim galore
 
-module add cutadapt/4.2
-module add trimgalore/0.5.0
+#module add cutadapt/4.2
+#module add trimgalore/0.5.0
 
 echo
 echo " * trim_galore: $(readlink -f $(which trim_galore)) "

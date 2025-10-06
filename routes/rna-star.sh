@@ -4,8 +4,6 @@
 ## RNA-seq using STAR aligner
 ##
 
-source ~/.bashrc  # Reload the bashrc file
-
 # script filename
 script_path="${BASH_SOURCE[0]}"
 script_name=$(basename "$script_path")
@@ -28,6 +26,9 @@ sample=$2
 
 # paths
 code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 # reserve a thread for overhead
 threads=6
