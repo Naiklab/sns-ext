@@ -1,6 +1,6 @@
 # SNS-EXT: Seq-N-Slide Extended for Minerva HPC
 
-![Minerva Logo](images/minerva-logo-ver2.png)
+![Minerva Logo](assets/minerva-logo-ver2.png)
 
 A specialized adaptation of the Seq-N-Slide (SNS) pipeline optimized for Mount Sinai's Minerva High Performance Computing (HPC) environment with LSF job scheduling.
 
