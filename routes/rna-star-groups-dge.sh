@@ -25,6 +25,9 @@ proj_dir=$(readlink -f "$1")
 # additional settings
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to R and bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 # display settings
 echo
 echo " * proj_dir: $proj_dir "
@@ -88,8 +91,7 @@ if [ ! -s "$counts_table" ] ; then
 	exit 1
 fi
 
-# unload all loaded modulefiles
-module purge
+# Using pixi environment instead of modules
 #########################
 
 
@@ -147,9 +149,7 @@ sleep 3
 
 echo -e "\n ========== test R environment ========== \n"
 
-# load relevant modules
-
-module load R/4.4.1
+# Using R from pixi environment
 
 echo
 echo " * R: $(readlink -f $(which R)) "
@@ -158,11 +158,9 @@ echo " * Rscript: $(readlink -f $(which Rscript)) "
 echo " * Rscript version: $(Rscript --version 2>&1) "
 echo
 
-Rscript --vanilla "${code_dir}/scripts/test-package.R" optparse
-Rscript --vanilla "${code_dir}/scripts/test-package.R" mnormt
-Rscript --vanilla "${code_dir}/scripts/test-package.R" limma
+# Note: Package testing removed - using pixi environment with pre-installed packages
 
-sleep 5
+sleep 2
 
 
 #########################

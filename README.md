@@ -1,6 +1,6 @@
 # SNS-EXT: Seq-N-Slide Extended for Minerva HPC
 
-![Athena Logo](https://img.freepik.com/premium-vector/athena-goddess-line-art-style-logo_440600-1385.jpg?w=1380)
+![Minerva Logo](images/minerva-logo-ver2.png)
 
 A specialized adaptation of the Seq-N-Slide (SNS) pipeline optimized for Mount Sinai's Minerva High Performance Computing (HPC) environment with LSF job scheduling.
 
@@ -23,12 +23,36 @@ SNS-EXT provides automated workflows for common Illumina sequencing-based protoc
 - ✅ **Standardized outputs**: Consistent file formats and directory structures
 - ✅ **Resource management**: Optimized memory and CPU allocation for HPC environment
 
+## Prerequisites
+
+This pipeline requires **Pixi** for dependency management and environment isolation. Pixi provides reproducible, cross-platform package management using conda-forge packages.
+
+### Install Pixi
+
+Visit the [official Pixi website](https://pixi.sh) for detailed installation instructions, or use the quick install:
+
+```bash
+# Quick install (Linux/macOS)
+curl -fsSL https://pixi.sh/install.sh | bash
+
+# Restart your shell or source your shell configuration
+source ~/.bashrc  # or ~/.zshrc for zsh
+```
+
+For more installation options, see: [https://pixi.sh/latest/getting_started/installation/](https://pixi.sh/latest/getting_started/installation/)
+
 ## Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/Naiklab/sns-ext.git
+# Clone the repository (development branch)
+git clone -b development https://github.com/Naiklab/sns-ext.git
 cd sns-ext
+
+# Allocate a bash interactive job for installation step (Please edit the project to match your project account)
+bsub -Is -P  <add-project-account> -q premium -n 4 -W 24:00 -R 'rusage[mem=64000]' -R span[hosts=1] bash
+
+# Install all dependencies using pixi
+pixi install
 
 # Make scripts executable
 chmod +x run generate-settings gather-fastqs
@@ -39,19 +63,26 @@ chmod +x scripts/*.sh
 
 ## Quick Start
 
-1. **Generate project settings**:
+1. **Activate pixi environment** (required before running any pipeline commands):
+
+   ```bash
+   cd /path/to/your/sns-ext
+   eval "$(pixi shell-hook)"
+   ```
+
+2. **Generate project settings**:
 
    ```bash
    ./generate-settings
    ```
 
-2. **Gather FASTQ files**:
+3. **Gather FASTQ files**:
 
    ```bash
    ./gather-fastqs /path/to/fastq/directory
    ```
 
-3. **Run analysis pipeline**:
+4. **Run analysis pipeline**:
 
    ```bash
    ./run [route] [sample-name]
@@ -92,12 +123,75 @@ The pipeline uses a settings file to configure analysis parameters. Key settings
 - Resource allocation (memory, CPU)
 - Output directory structure
 
+## Testing R Package Environment
+
+To verify that all required R packages are properly installed and accessible, use the comprehensive testing script:
+
+```bash
+
+# Allocate a bash interactive job for testing (Please edit the project to match your project account)
+bsub -Is -P  <add-project-account> -q premium -n 4 -W 2:00 -R 'rusage[mem=32000]' -R span[hosts=1] bash
+
+# Navigate to your SNS-EXT project directory
+cd /path/to/your/sns-ext
+
+# Activate the pixi environment and run the R package test
+eval "$(pixi shell-hook)"
+
+Rscript scripts/test-all-r-packages.R
+```
+
+This script will:
+- ✅ Test all required R and Bioconductor packages
+- 📍 Show the installation location of each package using `find.package()`
+- 📊 Generate a summary report with success/failure status
+- 💾 Save detailed results to `r-package-test-results.csv`
+
+**Key packages tested include:**
+- **Bioconductor**: DESeq2, DiffBind, ChIPseeker, org.Hs.eg.db, org.Mm.eg.db
+- **TxDb packages**: TxDb.Hsapiens.UCSC.hg38.knownGene, TxDb.Mmusculus.UCSC.mm10.knownGene
+- **CRAN packages**: tidyverse, ggplot2, pheatmap, BiocManager
+
+**Installing missing packages:**
+
+If the test reveals missing packages, use the automated installation script:
+
+```bash
+# After running the test script above, install missing packages
+Rscript scripts/install-missing-r-packages.R
+
+# Verify the installations worked by running the test again
+Rscript scripts/test-all-r-packages.R
+```
+
+The installation script will:
+- 🔍 Read the test results from `r-package-test-results.csv`
+- 📦 Automatically install all missing packages using BiocManager
+- ✅ Verify each installation by testing if the package loads
+- 📊 Generate an installation report in `r-package-installation-results.csv`
+- 💡 Provide manual installation suggestions for problematic packages
+
+**Troubleshooting missing packages:**
+- Check if packages are listed in `pixi.toml`
+- Reinstall pixi environment: `pixi install`
+- For packages not available via conda, they can be installed directly in R using BiocManager
+- Some packages (like TxDb databases) may need manual installation due to conda availability
+
 ## Dependencies
 
-- LSF job scheduler (Minerva HPC)
-- Standard bioinformatics tools (STAR, Salmon, MACS2, etc.)
-- R with required packages
-- Python with necessary libraries
+All dependencies are automatically managed by Pixi and include:
+
+- **Pixi package manager** (required - see Prerequisites section)
+- **LSF job scheduler** (Minerva HPC)
+- **Bioinformatics tools**: STAR, Salmon, MACS2, BWA, Bowtie2, SAMtools, etc.
+- **R environment**: R 4.4+ with Bioconductor and CRAN packages
+- **Python environment**: Python 3.11+ with data science libraries
+- **System tools**: Java, ImageMagick, UCSC utilities
+
+## Repository Information
+
+**Current Repository**: [Naiklab/sns-ext](https://github.com/Naiklab/sns-ext) (development branch)  
+**Pixi Documentation**: [https://pixi.sh](https://pixi.sh)
 
 ## Original SNS Pipeline
 
@@ -117,4 +211,4 @@ See [LICENSE](LICENSE) file for details.
 
 ## Support
 
-For issues specific to the Minerva adaptation, please open an issue in this repository. For general SNS questions, refer to the [original documentation](https://igordot.github.io/sns).
+For issues specific to this Minerva adaptation, please open an issue in the [development branch](https://github.com/Naiklab/sns-ext/tree/development). For general SNS questions, refer to the [original documentation](https://igordot.github.io/sns).

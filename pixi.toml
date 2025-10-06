@@ -1,0 +1,131 @@
+[project]
+name = "sns-ext"
+version = "0.1.0"
+description = "SNS-EXT Pipeline with Pixi - Based on actual module dependencies"
+channels = ["conda-forge", "bioconda", "sleap"]
+platforms = ["linux-64"]
+
+[dependencies]
+# Core Python
+python = "3.11.*"
+pip = "*"
+
+# Perl and modules
+perl = "*"
+perl-list-moreutils = "*"
+
+# Bioinformatics aligners and tools
+star = "*"
+bowtie2 = "*"
+bwa = "*"
+bismark = "*"
+
+# Sequencing analysis tools
+samtools = "*"
+bcftools = "*"
+bedtools = "*"
+sambamba = "*"
+htslib = "*"
+picard = "*"
+deeptools= "*"
+
+# UCSC Kent utilities
+ucsc-bedgraphtobigwig = "*"
+
+# Quality control
+fastqc = "*"
+fastq-screen = "*"
+multiqc = "*"
+
+# Read trimming
+cutadapt = "*"
+trim-galore = "*"
+trimmomatic = "*"
+
+# Peak calling and ChIP-seq
+macs2 = "*"
+macs3 = "*"
+
+# Quantification
+subread = "*"
+salmon = "*"
+rsem = "*"
+
+# Variant calling (GATK alternatives via conda)
+gatk4 = "*"
+
+# R environment
+r-base = ">=4.4.2,<4.5"
+r-essentials = ">=4.4,<5"
+
+# R Bioconductor packages
+bioconductor-deseq2 = ">=1.46.0,<2"
+bioconductor-enhancedvolcano = ">=1.24.0,<2"
+bioconductor-fgsea = ">=1.32.2,<2"
+bioconductor-genefilter = ">=1.88.0,<2"
+bioconductor-genomeinfodbdata = "*"
+bioconductor-limma = "*"
+"bioconductor-org.hs.eg.db" = "*"
+"bioconductor-org.mm.eg.db" = "*"
+bioconductor-chippeakanno = "*"
+bioconductor-chipseeker = "*"
+bioconductor-diffbind = "*"
+"bioconductor-go.db" = "*"
+"bioconductor-txdb.hsapiens.ucsc.hg38.knowngene" = "*"
+"bioconductor-txdb.mmusculus.ucsc.mm10.knowngene" = "*"
+bioconductor-rtracklayer = "*"
+
+# R CRAN packages
+r-tidyverse = "*"
+r-ggplot2 = "*"
+r-dplyr = "*"
+r-readr = "*"
+r-stringr = "*"
+r-tibble = "*"
+r-tidyr = "*"
+r-ggrepel = "*"
+r-cowplot = "*"
+r-pheatmap = "*"
+r-rcolorbrewer = "*"
+r-magrittr = "*"
+r-glue = "*"
+r-writexl = "*"
+r-msigdbr = "*"
+r-enrichr = "*"
+r-optparse = "*"
+r-mnormt = "*"
+r-biocmanager = "*"
+
+# Additional R packages that might need conda-forge
+r-ashr = "*"
+
+# Utilities
+imagemagick = "*"
+ucsc-wigtobigwig = "*"
+
+# Python data science (for any Python scripts)
+numpy = "*"
+pandas = "*"
+matplotlib = "*"
+seaborn = "*"
+
+# Java for GATK and other tools
+openjdk = "17.*"
+
+
+
+[tasks]
+setup = "echo 'SNS-EXT environment ready with all pipeline dependencies!'"
+test-tools = """
+echo "Testing key tools..."
+echo "STAR: $(STAR --version 2>&1 | head -1)"
+echo "Bowtie2: $(bowtie2 --version 2>&1 | head -1)"
+echo "BWA: $(bwa 2>&1 | grep Version)"
+echo "SAMtools: $(samtools --version | head -1)"
+echo "FastQC: $(fastqc --version)"
+echo "Python: $(python --version)"
+echo "R: $(R --version | head -1)"
+"""
+run-pipeline = { cmd = "./run $ROUTE", description = "Run SNS-EXT pipeline with specified route" }
+gather-fastqs = { cmd = "./gather-fastqs $DIR", description = "Gather FASTQ files from directory" }
+test-env = { cmd = "./scripts/test-package.R", description = "Test R environment and packages" }
