@@ -15,14 +15,6 @@ SNS-EXT provides automated workflows for common Illumina sequencing-based protoc
 - **WES/WGS**: Whole exome/genome variant detection
 - **Species identification**: Contaminant screening and quality control
 
-## Key Features
-
-- ✅ **Minerva-optimized**: Configured for LSF job scheduler and Minerva-specific resources
-- ✅ **Modular design**: Individual segments for flexible workflow construction
-- ✅ **Quality control**: Comprehensive QC metrics and reporting
-- ✅ **Standardized outputs**: Consistent file formats and directory structures
-- ✅ **Resource management**: Optimized memory and CPU allocation for HPC environment
-
 ## Installation
 
 ```bash
@@ -42,27 +34,30 @@ source activate /sc/arion/projects/naiklab/ikjot/conda_envs/sns-ext-base-environ
 ## Quick Start
 
 1. **Generate project settings**:
- 
+
    ```bash
-sns-ext/generate-settings <genome>
+   sns-ext/generate-settings <genome>
    ```
-- Choose between hg38 (Human) or mm10 (Mouse)
+
+   - Choose between hg38 (Human) or mm10 (Mouse)
+
 2. **Gather FASTQ files**:
 
    ```bash
-sns-ext/gather-fastqs /path/to/fastq-directory
+   sns-ext/gather-fastqs /path/to/fastq-directory
    ```
 
 3. **Run analysis pipeline**:
 
    ```bash
-sns-ext/run [route] 
+   sns-ext/run [route]
    ```
-4. **Run advanced analysis pipeline for RNA-samples **:
+
+4. **Run advanced analysis pipeline for RNA-samples**:
 
    ```bash
-source activate /sc/arion/projects/naiklab/ikjot/conda_envs/r_env
-sns-ext/run rna-star-groups-dge
+   source activate /sc/arion/projects/naiklab/ikjot/conda_envs/r_env
+   sns-ext/run rna-star-groups-dge
    ```
 
 ## Available Routes
