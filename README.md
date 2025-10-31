@@ -28,33 +28,41 @@ SNS-EXT provides automated workflows for common Illumina sequencing-based protoc
 ```bash
 # Clone the repository
 git clone https://github.com/Naiklab/sns-ext.git
-cd sns-ext
 
 # Make scripts executable
-chmod +x run generate-settings gather-fastqs
-chmod +x routes/*.sh
-chmod +x segments/*.sh
-chmod +x scripts/*.sh
+chmod 777 -R sns-ext/
+
+#Load anaconda3 module
+module load anaconda3
+
+#Activate base sns-ext environment
+source activate /sc/arion/projects/naiklab/ikjot/conda_envs/sns-ext-base-environment
 ```
 
 ## Quick Start
 
 1. **Generate project settings**:
-
+ 
    ```bash
-   ./generate-settings
+sns-ext/generate-settings <genome>
    ```
-
+- Choose between hg38 (Human) or mm10 (Mouse)
 2. **Gather FASTQ files**:
 
    ```bash
-   ./gather-fastqs /path/to/fastq/directory
+sns-ext/gather-fastqs /path/to/fastq-directory
    ```
 
 3. **Run analysis pipeline**:
 
    ```bash
-   ./run [route] [sample-name]
+sns-ext/run [route] 
+   ```
+4. **Run advanced analysis pipeline for RNA-samples **:
+
+   ```bash
+source activate /sc/arion/projects/naiklab/ikjot/conda_envs/r_env
+sns-ext/run rna-star-groups-dge
    ```
 
 ## Available Routes
