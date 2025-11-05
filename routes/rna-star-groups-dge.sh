@@ -91,7 +91,7 @@ fi
 # unload all loaded modulefiles
 module purge
 #########################
-
+module load proxies
 
 # settings and files
 
