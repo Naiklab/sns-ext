@@ -15,7 +15,7 @@ options(warn = 1)
 # java heap size
 options(java.parameters = "-Xmx8G")
 
-.libPaths(c("/sc/arion/projects/naiklab/ikjot/R", "/hpc/users/sidhui01/.Rlib"))
+.libPaths(c("/sc/arion/projects/naiklab/ikjot/R", "/hpc/users/sidhui01/.Rlib", "/sc/arion/projects/naiklab/ikjot/conda_envs/r_env/lib/R/library"))
 
 print(paste0("RlibPaths =",.libPaths()))
 
