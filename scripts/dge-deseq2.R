@@ -15,6 +15,10 @@ options(warn = 1)
 # java heap size
 options(java.parameters = "-Xmx8G")
 
+.libPaths(c("/sc/arion/projects/naiklab/ikjot/R", "/hpc/users/sidhui01/.Rlib"))
+
+print(paste0("RlibPaths =",.libPaths()))
+
 # get scripts directory (directory of this file) and load relevant functions
 args_all = commandArgs(trailingOnly = FALSE)
 scripts_dir = normalizePath(dirname(sub("^--file=", "", args_all[grep("^--file=", args_all)])))
@@ -43,9 +47,7 @@ if (!file.exists(groups_table_file)) stop("file does not exist: ", groups_table_
 r_dir = "r-data"
 if (!dir.exists(r_dir)) dir.create(r_dir)
 
-.libPaths(c("/sc/arion/projects/naiklab/ikjot/R", "/hpc/users/sidhui01/.Rlib"))
 
-print(paste0("RlibPaths =",.libPaths()))
 # for general data manipulation
 library("magrittr")
 library("tibble")
