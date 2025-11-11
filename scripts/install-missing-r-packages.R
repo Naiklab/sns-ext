@@ -102,6 +102,8 @@ if (failed_installs > 0) {
   cat("  BiocManager::install('org.Mm.eg.db')\n")
   cat("\nFor GO.db package, try:\n")
   cat("  BiocManager::install('GO.db')\n")
+  cat("\nFor CHIPseeker package, try:\n")
+  cat("  devtools::install_github('YuLab-SMU/CHIPseeker')\n")
 }
 
 # Save installation results

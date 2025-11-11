@@ -1,0 +1,38 @@
+name: Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.md'
+      - 'CITATION.cff'
+      - 'pixi.toml'
+  
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**.md'
+      - 'CITATION.cff'
+
+jobs:
+  validate-citation:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Validate CITATION.cff
+      uses: citation-file-format/cffconvert-github-action@2.0.0
+      with:
+        args: "--validate"
+
+  check-links:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check markdown links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        config-file: '.github/mlc_config.json'
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'

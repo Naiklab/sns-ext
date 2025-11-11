@@ -1,0 +1,57 @@
+name: Security & Code Quality
+
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly on Mondays
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Run ShellCheck on shell scripts
+      uses: ludeeus/action-shellcheck@master
+      with:
+        scandir: './routes'
+        additional_files: 'gather-fastqs generate-settings run'
+        ignore_paths: '.pixi'
+    
+    - name: Run ShellCheck on segments
+      uses: ludeeus/action-shellcheck@master
+      with:
+        scandir: './segments'
+        ignore_paths: '.pixi'
+        
+    - name: Run ShellCheck on scripts
+      uses: ludeeus/action-shellcheck@master  
+      with:
+        scandir: './scripts'
+        format: gcc
+        ignore_paths: '.pixi'

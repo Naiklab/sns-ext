@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main, development ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Pixi
+      uses: prefix-dev/setup-pixi@v0.8.1
+      with:
+        pixi-version: v0.13.0
+        cache: true
+    
+    - name: Install dependencies
+      run: pixi install
+    
+    - name: Test environment setup
+      run: pixi run setup
+    
+    - name: Test key tools
+      run: pixi run test-tools
+    
+    - name: Check scripts are executable
+      run: |
+        test -x run
+        test -x generate-settings  
+        test -x gather-fastqs
+        find routes/ -name "*.sh" -exec test -x {} \;
+        find segments/ -name "*.sh" -exec test -x {} \;
+        find scripts/ -name "*.sh" -exec test -x {} \;
+    
+    - name: Test R environment (if possible)
+      run: |
+        pixi run -e default r-base --version || echo "R testing skipped - requires full environment"

@@ -51,14 +51,14 @@ cd sns-ext
 # Allocate a bash interactive job for installation step (Please edit the project to match your project account)
 bsub -Is -P  <add-project-account> -q premium -n 4 -W 24:00 -R 'rusage[mem=64000]' -R span[hosts=1] bash
 
+#Load Proxies module to enable internet access
+module load proxies
+
 # Install all dependencies using pixi
 pixi install
 
 # Make scripts executable
-chmod +x run generate-settings gather-fastqs
-chmod +x routes/*.sh
-chmod +x segments/*.sh
-chmod +x scripts/*.sh
+chmod -R 777 /path/to/your/sns-ext
 ```
 
 ## Quick Start
@@ -73,19 +73,26 @@ chmod +x scripts/*.sh
 2. **Generate project settings**:
 
    ```bash
-   ./generate-settings
+   /path/to/your/sns-ext/generate-settings <Genome>
    ```
+
+## Genome Configuration Options
+
+| Genome Build | Description |
+|-------|-------------|
+| `mm10` | Mouse genome (GRCm38/mm10) - for mouse/murine samples |
+| `hg38` | Human genome (GRCh38/hg38) - for human samples |
 
 3. **Gather FASTQ files**:
 
    ```bash
-   ./gather-fastqs /path/to/fastq/directory
+   /path/to/your/sns-ext/gather-fastqs /path/to/fastq/directory
    ```
 
 4. **Run analysis pipeline**:
 
    ```bash
-   ./run [route] [sample-name]
+   /path/to/your/sns-ext/run [route]
    ```
 
 ## Available Routes
@@ -131,6 +138,9 @@ To verify that all required R packages are properly installed and accessible, us
 
 # Allocate a bash interactive job for testing (Please edit the project to match your project account)
 bsub -Is -P  <add-project-account> -q premium -n 4 -W 2:00 -R 'rusage[mem=32000]' -R span[hosts=1] bash
+
+#Load Proxies module to enable internet access
+module load proxies
 
 # Navigate to your SNS-EXT project directory
 cd /path/to/your/sns-ext
