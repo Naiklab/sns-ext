@@ -62,7 +62,7 @@ sub main {
 		$strand="EXP-STRAND|unstr"; # Set to unstr by default
 		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/refFlat.txt.gz";
 		$interval_list="RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/hg38_rRNA.list";
-		$bowtie2="REF-BOWTIE2/sc/arion/projects/naiklab/ikjot/reference_files/bowtie2_hg38_index/human_bowtie2_index";
+		$bowtie2="REF-BOWTIE2|/sc/arion/projects/naiklab/ikjot/reference_files/bowtie2_hg38_index/human_bowtie2_index";
 		$blacklist="REF-BLACKLIST|/sc/arion/projects/naiklab/ikjot/reference_files/blacklist_files/hg38.blacklist.bed";
 		$chrom_sizes="REF-CHROMSIZES|/sc/arion/projects/naiklab/ikjot/reference_files/Chrom_sizes/hg38.chrom_sizes_ensembl.txt";
 		$genome_build="REF-GENOMEBUILD|hg38";
@@ -89,18 +89,18 @@ sub main {
 	# save genome setting
 	open(my $fh, ">", $settings_file);
 	#print $fh $genome_setting;
-	print $fh "$genome_dir_setting \n";
-	print $fh "$settings_fasta \n";
-	print $fh "$settings_gtf \n";
-	print $fh "$fastq_screen \n";
-	print $fh "$ref_star \n";
-	print $fh "$strand \n";
-	print $fh "$flat \n";
-	print $fh "$interval_list \n";
-	print $fh "$bowtie2 \n";
-	print $fh "$blacklist \n";
-	print $fh "$chrom_sizes \n";
-	print $fh "$genome_build \n";
+	print $fh "$genome_dir_setting\n";
+	print $fh "$settings_fasta\n";
+	print $fh "$settings_gtf\n";
+	print $fh "$fastq_screen\n";
+	print $fh "$ref_star\n";
+	print $fh "$strand\n";
+	print $fh "$flat\n";
+	print $fh "$interval_list\n";
+	print $fh "$bowtie2\n";
+	print $fh "$blacklist\n";
+	print $fh "$chrom_sizes\n";
+	print $fh "$genome_build\n";
 	close $fh;
 
 	# get values to make sure they were set properly
@@ -110,14 +110,14 @@ sub main {
 
 	# print values
 	print STDERR "\n";
-	print STDERR " REF DIR : $genome_dir_setting \n";
-	print STDERR " REF FASTA : $settings_fasta \n";
-	print STDERR " REF-GTF : $settings_gtf \n";
-	print STDERR " REF-FASTQSCREEN : $fastq_screen \n";
-	print STDERR " REF-STAR : $ref_star \n";
-	print STDERR " EXP-STRAND : $strand \n";
-	print STDERR " REF-REFFLAT : $flat \n";
-	print STDERR " RRNAINTERVALLIST : $interval_list \n";
+	print STDERR " REF DIR : $genome_dir_setting";
+	print STDERR " REF FASTA : $settings_fasta";
+	print STDERR " REF-GTF : $settings_gtf";
+	print STDERR " REF-FASTQSCREEN : $fastq_screen";
+	print STDERR " REF-STAR : $ref_star";
+	print STDERR " EXP-STRAND : $strand";
+	print STDERR " REF-REFFLAT : $flat";
+	print STDERR " RRNAINTERVALLIST : $interval_list";
 }
 
 
