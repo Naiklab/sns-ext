@@ -58,10 +58,10 @@ sub main {
 		$settings_fasta = "REF-FASTA|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/H_sapiens/GRCh38/current/Homo_sapiens.GRCh38.dna.primary_assembly.fa";
 		$settings_gtf="REF-GTF|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Annotation/Gencode/Human/GRCh38/current/gencode.v40.primary_assembly.annotation.gtf";
 		$fastq_screen="REF-FASTQSCREEN|/sc/arion/projects/naiklab/ikjot/reference_files/fastq_screen.conf";
-		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR-human";
+		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR-human-2.7.11b";
 		$strand="EXP-STRAND|unstr"; # Set to unstr by default
-		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/refFlat.txt.gz";
-		$interval_list="RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/hg38_rRNA.list";
+		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/refFlat.no_chr.txt.gz";
+		$interval_list="REF-RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/hg38_rRNA.full.list";
 		$bowtie2="REF-BOWTIE2|/sc/arion/projects/naiklab/ikjot/reference_files/bowtie2_hg38_index/human_bowtie2_index";
 		$blacklist="REF-BLACKLIST|/sc/arion/projects/naiklab/ikjot/reference_files/blacklist_files/hg38.blacklist.bed";
 		$chrom_sizes="REF-CHROMSIZES|/sc/arion/projects/naiklab/ikjot/reference_files/Chrom_sizes/hg38.chrom_sizes_ensembl.txt";
@@ -73,10 +73,10 @@ sub main {
 		$settings_fasta = "REF-FASTA|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Genome-fasta/M_musculus/GRCm39/current/Mus_musculus.GRCm39.dna.primary_assembly.fa";
 		$settings_gtf="REF-GTF|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Annotation/Gencode/Mouse/GRCm39/current/gencode.vM29.primary_assembly.annotation.gtf";
 		$fastq_screen="REF-FASTQSCREEN|/sc/arion/projects/naiklab/ikjot/reference_files/fastq_screen.conf";
-		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR-mouse";
+		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR-mouse-2.7.11b";
 		$strand="EXP-STRAND|unstr"; # Set to unstr by default
-		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/refFlat.txt.gz";
-		$interval_list="RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/mm10_rRNA.list";
+		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/refFlat.no_chr.txt.gz";
+		$interval_list="REF-RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/mm10_rRNA.full.list";
 		$bowtie2="REF-BOWTIE2|/sc/arion/projects/naiklab/ikjot/reference_files/bowtie2_mm10_index/mouse_bowtie2_index";
 		$blacklist="REF-BLACKLIST|/sc/arion/projects/naiklab/ikjot/reference_files/blacklist_files/mm10.blacklist.bed";
 		$chrom_sizes="REF-CHROMSIZES|/sc/arion/projects/naiklab/ikjot/reference_files/Chrom_sizes/mm10.chrom_sizes_ensembl.txt";
@@ -101,6 +101,7 @@ sub main {
 	print $fh "$blacklist\n";
 	print $fh "$chrom_sizes\n";
 	print $fh "$genome_build\n";
+	print $fh "$interval_list\n";
 	close $fh;
 
 	# get values to make sure they were set properly

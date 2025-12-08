@@ -111,11 +111,30 @@ fi
 #module load trimmomatic/0.36  # Using pixi environment
 
 # Use trimmomatic from pixi environment
-trimmomatic_jar="$(which trimmomatic)"
+trimmomatic_cmd="$(which trimmomatic)"
 
-# check if the trimmomatic jar file is present
-if [ ! -s "$trimmomatic_jar" ] ; then
-	echo -e "\n $script_name ERROR: FILE $trimmomatic_jar DOES NOT EXIST \n" >&2
+# check if the trimmomatic command is present
+if [ ! -x "$trimmomatic_cmd" ] ; then
+	echo -e "\n $script_name ERROR: COMMAND $trimmomatic_cmd DOES NOT EXIST OR IS NOT EXECUTABLE \n" >&2
+	exit 1
+fi
+
+# Find the adapters directory in the pixi environment
+# The trimmomatic wrapper is in .pixi/envs/default/bin/trimmomatic
+# The adapters are in .pixi/envs/default/share/trimmomatic-*/adapters/
+pixi_env_dir="$(dirname "$(dirname "$trimmomatic_cmd")")"
+adapters_dir="${pixi_env_dir}/share/trimmomatic-"*"/adapters"
+# Expand the glob pattern to get the actual directory
+adapters_dir=$(echo $adapters_dir)
+
+if [ ! -d "$adapters_dir" ] ; then
+	echo -e "\n $script_name ERROR: ADAPTERS DIR $adapters_dir DOES NOT EXIST \n" >&2
+	exit 1
+fi
+
+adapter_file="${adapters_dir}/TruSeq3-PE.fa"
+if [ ! -s "$adapter_file" ] ; then
+	echo -e "\n $script_name ERROR: ADAPTER FILE $adapter_file DOES NOT EXIST \n" >&2
 	exit 1
 fi
 
@@ -130,7 +149,8 @@ else
 fi
 
 echo
-echo " * Trimmomatic: $trimmomatic_jar "
+echo " * Trimmomatic: $trimmomatic_cmd "
+echo " * Adapters: $adapter_file "
 echo " * run type: $run_type_arg "
 echo " * FASTQ R1: $fastq_R1 "
 echo " * FASTQ R2: $fastq_R2 "
@@ -141,11 +161,12 @@ echo " * FASTQ R2 trimmed unpaired: $fastq_R2_trim_unpaired "
 echo
 
 bash_cmd="
-java -Xms8G -Xmx8G -jar $trimmomatic_jar \
+$trimmomatic_cmd \
+-Xms8G -Xmx8G \
 $run_type_arg \
 -threads $threads \
 $files_arg \
-ILLUMINACLIP:/hpc/packages/minerva-common/trimmomatic/0.36/adapters/TruSeq3-PE.fa:2:30:10 \
+ILLUMINACLIP:${adapter_file}:2:30:10 \
 TRAILING:5 SLIDINGWINDOW:4:15 MINLEN:35 \
 2> $trimmomatic_log
 "
