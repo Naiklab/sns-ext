@@ -11,7 +11,7 @@ deseq2_pca = function(object, intgroup, ntop = 1000, point_labels = TRUE) {
   suppressPackageStartupMessages({
     library(magrittr)
     library(DESeq2)
-    library(genefilter)
+    library(matrixStats)  # for rowVars instead of genefilter
     library(glue)
     library(RColorBrewer)
     library(ggplot2)

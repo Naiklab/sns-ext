@@ -57,7 +57,7 @@ library("glue")
 # for differenial expression
 library("DESeq2")
 library("ashr")
-library("genefilter")
+# library("genefilter")  # Disabled: causes segfault, using matrixStats::rowVars instead
 
 # for processing GTF (for gene lengths for FPKMs)
 library("rtracklayer")
