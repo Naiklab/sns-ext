@@ -1,5 +1,13 @@
 ## ATAC-SEQ - Differential Peak analysis and annotation
 
+# Force R to use pixi environment packages + system library paths
+pixi_lib = .libPaths()[grep("\\.pixi/envs/default/lib/R/library", .libPaths())]
+system_site = "/hpc/packages/minerva-rocky9/rpackages/4.4.1/site-library"
+system_bioc = "/hpc/packages/minerva-rocky9/rpackages/bioconductor/3.20"
+if (length(pixi_lib) > 0) {
+  .libPaths(c(pixi_lib, system_site, system_bioc))
+}
+
 # Needed for preinstalling R packages.
 #BiocManager::install(c("DiffBind","TxDb.Hsapiens.UCSC.hg38.knownGene","org.Hs.eg.db","TxDb.Mmusculus.UCSC.mm10.knownGene","org.Mm.eg.db","ChIPpeakAnno","tidyverse","enrichR","batchtma"),)
 

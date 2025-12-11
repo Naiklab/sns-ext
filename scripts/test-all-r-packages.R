@@ -4,8 +4,25 @@
 ## Test and install all R packages needed for SNS-EXT pipeline
 ##
 
+# Force R to use pixi environment packages + system library paths
+pixi_lib = .libPaths()[grep("\\.pixi/envs/default/lib/R/library", .libPaths())]
+system_site = "/hpc/packages/minerva-rocky9/rpackages/4.4.1/site-library"
+system_bioc = "/hpc/packages/minerva-rocky9/rpackages/bioconductor/3.20"
+
+if (length(pixi_lib) > 0) {
+  # Set library paths: pixi first, then system libraries for missing packages
+  .libPaths(c(pixi_lib, system_site, system_bioc))
+  message("Using R libraries:")
+  message("  1. Pixi environment: ", pixi_lib)
+  message("  2. System site library: ", system_site)
+  message("  3. System Bioconductor: ", system_bioc)
+} else {
+  warning("Could not find pixi R library in .libPaths()")
+  .libPaths(c(.libPaths(), system_site, system_bioc))
+}
+
 # Print R library paths
-cat("R library paths:\n")
+cat("\nR library paths:\n")
 print(.libPaths())
 cat("\n")
 

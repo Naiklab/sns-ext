@@ -55,10 +55,11 @@ rsem = "*"
 gatk4 = "*"
 
 # R environment
+# Keeping R 4.4.x for now - many Bioconductor packages not yet available for R 4.5 in conda
 r-base = ">=4.4.2,<4.5"
 r-essentials = ">=4.4,<5"
 
-# R Bioconductor packages
+# R Bioconductor packages (compatible with Bioconductor 3.20 / R 4.4)
 bioconductor-deseq2 = ">=1.46.0,<2"
 bioconductor-enhancedvolcano = ">=1.24.0,<2"
 bioconductor-fgsea = ">=1.32.2,<2"
@@ -71,9 +72,10 @@ bioconductor-chippeakanno = "*"
 bioconductor-chipseeker = "*"
 bioconductor-diffbind = "*"
 "bioconductor-go.db" = "*"
-"bioconductor-txdb.hsapiens.ucsc.hg38.knowngene" = "*"
-"bioconductor-txdb.mmusculus.ucsc.mm10.knowngene" = "*"
-bioconductor-rtracklayer = "*"
+# rtracklayer and TxDb packages pinned to R 4.4-compatible versions
+bioconductor-rtracklayer = ">=1.66.0,<1.67"
+"bioconductor-txdb.hsapiens.ucsc.hg38.knownGene" = "*"
+"bioconductor-txdb.mmusculus.ucsc.mm10.knownGene" = "*"
 
 # R CRAN packages
 r-tidyverse = "*"

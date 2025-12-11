@@ -7,6 +7,13 @@
 ## usage: Rscript --vanilla quant-merge-salmon.R genes.gtf quant_sf_dir out_base
 ##
 
+# Force R to use pixi environment packages + system library paths
+pixi_lib = .libPaths()[grep("\\.pixi/envs/default/lib/R/library", .libPaths())]
+system_site = "/hpc/packages/minerva-rocky9/rpackages/4.4.1/site-library"
+system_bioc = "/hpc/packages/minerva-rocky9/rpackages/bioconductor/3.20"
+if (length(pixi_lib) > 0) {
+  .libPaths(c(pixi_lib, system_site, system_bioc))
+}
 
 # increase output width
 options(width = 120)

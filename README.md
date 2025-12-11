@@ -148,7 +148,13 @@ cd /path/to/your/sns-ext
 # Activate the pixi environment and run the R package test
 eval "$(pixi shell-hook)"
 
-Rscript scripts/test-all-r-packages.R
+# For missing Bioconductor packages, run the following command
+Rscript install-bioconductor-packages.R
+
+# Test run to check if all packages are installed and can be loaded successfully
+Rscript test-load-install-packages.R
+
+
 ```
 
 This script will:
