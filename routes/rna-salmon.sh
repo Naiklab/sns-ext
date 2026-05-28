@@ -39,6 +39,9 @@ echo " * slurm threads: $SLURM_CPUS_PER_TASK "
 echo " * command threads: $threads "
 echo
 
+# load required modules
+module load salmon/1.4.0
+
 # specify maximum runtime for sbatch job
 # SBATCHTIME=6:00:00
 
