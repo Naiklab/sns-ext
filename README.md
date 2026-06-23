@@ -54,11 +54,51 @@ bsub -Is -P  <add-project-account> -q premium -n 4 -W 24:00 -R 'rusage[mem=64000
 #Load Proxies module to enable internet access
 module load proxies
 
+# IMPORTANT: Redirect pixi cache to your project space to avoid home directory quota issues.
+# Pixi downloads large packages (~several GB) into ~/.cache/rattler by default, which will
+# exceed the home directory quota on Minerva. Set PIXI_CACHE_DIR before running pixi install.
+export PIXI_CACHE_DIR=/sc/arion/projects/<your-project-dir>/.pixi-cache
+
 # Install all dependencies using pixi
 pixi install
 
 # Make scripts executable
 chmod -R 777 /path/to/your/sns-ext
+```
+
+> **Note**: Add `export PIXI_CACHE_DIR=/sc/arion/projects/<your-project-dir>/.pixi-cache` to your
+> `~/.bashrc` so you don't need to set it every session. The cache can be 10–20 GB, so project
+> space is the right home for it on Minerva.
+
+### Troubleshooting: "Quota exceeded" during `pixi install`
+
+If you see an error like:
+```
+Error: × failed to fetch qt6-main-...conda
+  ╰─▶ Quota exceeded (os error 122)
+```
+
+Your home directory (`/hpc/users/<username>/`) has hit its disk quota. Pixi's package cache
+defaults to `~/.cache/rattler/`, which can grow to 10–20 GB during installation.
+
+**Fix**: Point the cache to your project space (which has a much larger quota):
+
+```bash
+# Set cache location to your project directory
+export PIXI_CACHE_DIR=/sc/arion/projects/<your-project-dir>/.pixi-cache
+
+# Optional: clear any partial cache from the failed attempt
+rm -rf ~/.cache/rattler
+
+# Retry installation
+pixi install
+```
+
+To make this permanent, add the export line to your `~/.bashrc`:
+
+```bash
+echo 'export PIXI_CACHE_DIR=/sc/arion/projects/<your-project-dir>/.pixi-cache' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ## Quick Start
