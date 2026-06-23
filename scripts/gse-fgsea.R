@@ -3,7 +3,7 @@
 ##
 
 
-gse_fgsea = function(stats_df, gene_col, rank_col, species, title = "", pos_label = "Pos", neg_label = "Neg", file_prefix = "gse") {
+gse_fgsea = function(stats_df, gene_col, rank_col, species, title = "", pos_label = "Pos", neg_label = "Neg", file_prefix = "gse", genesets_tbl = NULL) {
 
   suppressPackageStartupMessages({
     library(magrittr)
@@ -33,8 +33,10 @@ gse_fgsea = function(stats_df, gene_col, rank_col, species, title = "", pos_labe
     return(NULL)
   }
 
-  # extract species-specific gene sets
-  genesets_tbl = msigdbr(species = species) %>% dplyr::mutate(gs_name = str_trunc(gs_name, 100))
+  # extract species-specific gene sets (use pre-fetched table if provided, otherwise fetch now)
+  if (is.null(genesets_tbl)) {
+    genesets_tbl = msigdbr(species = species) %>% dplyr::mutate(gs_name = str_trunc(gs_name, 100))
+  }
 
   # check for sufficient number of gene set genes
   genes_msigdb = genesets_tbl %>% dplyr::pull(gene_symbol) %>% unique()

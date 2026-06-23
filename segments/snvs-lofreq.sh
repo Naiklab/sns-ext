@@ -82,8 +82,6 @@ vcf_fixed="${vcf_dir}/${sample}.vcf"
 # annotation command (next segment)
 annot_cmd="bash ${code_dir}/segments/annot-annovar.sh $proj_dir $sample $vcf_fixed"
 
-# unload all loaded modulefiles
-module purge
 
 
 #########################

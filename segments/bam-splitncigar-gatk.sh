@@ -81,8 +81,6 @@ bam_split_dir="${proj_dir}/BAM-SPLIT"
 mkdir -p "$bam_split_dir"
 bam_split="${bam_split_dir}/${bam_base}.bam"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

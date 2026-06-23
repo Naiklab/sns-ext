@@ -42,8 +42,6 @@ out_prefix_pad500="${out_prefix}.pad500"
 out_prefix_pad100="${out_prefix}.pad100"
 out_prefix_bed="${out_prefix}.bed"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

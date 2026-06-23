@@ -127,8 +127,6 @@ graph_fixed="${fixed_base}.png"
 # annotation command (next segment)
 annot_cmd="bash ${code_dir}/segments/annot-regions-annovar.sh $proj_dir $sample $cnvs_fixed"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 
@@ -449,7 +447,6 @@ rm -fv "$minipileup_control"
 # post-processing
 
 # clean up the environment before loading R module to avoid GCC conflicts
-module purge
 #module add R/3.6.3
 
 echo

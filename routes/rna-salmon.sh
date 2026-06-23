@@ -32,9 +32,6 @@ code_dir=$(dirname $(dirname "$script_path"))
 # activate pixi environment for access to bioinformatics tools
 eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
-# load required modules
-module load salmon/1.4.0
-
 # reserve a thread for overhead
 threads=6
 threads=$(( threads - 1 ))

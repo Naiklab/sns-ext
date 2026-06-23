@@ -61,7 +61,6 @@ trimmomatic_logs_dir="${proj_dir}/logs-trimmomatic"
 mkdir -p "$trimmomatic_logs_dir"
 trimmomatic_log="${trimmomatic_logs_dir}/${sample}.txt"
 
-# unload all loaded modulefiles - not needed in Minerva
 #module purge
 #module add default-environment
 

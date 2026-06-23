@@ -107,10 +107,10 @@ fi
 # run FastQC again after trimming (separately for paired-end reads)
 segment_qc_fastqc="qc-fastqc"
 bash_cmd="bash ${code_dir}/segments/${segment_qc_fastqc}.sh $proj_dir $sample $threads $fastq_R1_trimmed"
-($bash_cmd)
+eval "$bash_cmd"
 if [ -n "$fastq_R2_trimmed" ] ; then
 	bash_cmd="bash ${code_dir}/segments/${segment_qc_fastqc}.sh $proj_dir $sample $threads $fastq_R2_trimmed"
-	($bash_cmd)
+	eval "$bash_cmd"
 fi
 
 # run STAR
@@ -118,7 +118,7 @@ segment_align="align-star"
 bam_star=$(grep -s -m 1 "^${sample}," "${proj_dir}/samples.${segment_align}.csv" | cut -d ',' -f 2)
 if [ -z "$bam_star" ] ; then
 	bash_cmd="bash ${code_dir}/segments/${segment_align}.sh $proj_dir $sample $threads $fastq_R1_trimmed $fastq_R2_trimmed"
-	($bash_cmd)
+	eval "$bash_cmd"
 	bam_star=$(grep -m 1 "^${sample}," "${proj_dir}/samples.${segment_align}.csv" | cut -d ',' -f 2)
 fi
 
@@ -130,15 +130,14 @@ fi
 
 # generate BigWig (deeptools)
 segment_bw_deeptools="bigwig-deeptools"
-bash_cmd="bash ${code_dir}/segments/${segment_bw_deeptools}.sh $proj_dir $sample 4 $bam_star"
-bsub_cmd="bsub -W 48:00 -R rusage[mem=16000] -R span[hosts=1] -R himem -P ${account_name}  -n ${threads} -q premium -J sns.${segment_bw_deeptools}.${sample} ${bash_cmd}"
-echo "CMD: $bsub_cmd"
-(eval $bsub_cmd)
+bash_cmd="bash ${code_dir}/segments/${segment_bw_deeptools}.sh $proj_dir $sample $threads $bam_star"
+echo "CMD: $bash_cmd"
+eval "$bash_cmd"
 
 # Picard CollectRnaSeqMetrics
 segment_qc_picard="qc-picard-rnaseqmetrics"
 bash_cmd="bash ${code_dir}/segments/${segment_qc_picard}.sh $proj_dir $sample $bam_star"
-(eval $bash_cmd)
+eval "$bash_cmd"
 
 # determine run type for featurecounts
 if [ -n "$fastq_R2" ] ; then
@@ -153,12 +152,12 @@ exp_strand=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings
 # generate counts
 segment_quant="quant-featurecounts"
 bash_cmd="bash ${code_dir}/segments/${segment_quant}.sh $proj_dir $sample $threads $bam_star $run_type $exp_strand"
-($bash_cmd)
+eval "$bash_cmd"
 
 # generate unstranded counts just in case
 if [ "$exp_strand" != "unstr" ] ; then
 	bash_cmd="bash ${code_dir}/segments/${segment_quant}.sh $proj_dir $sample $threads $bam_star $run_type unstr"
-	($bash_cmd)
+	eval "$bash_cmd"
 fi
 
 

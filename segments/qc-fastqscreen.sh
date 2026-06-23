@@ -65,7 +65,6 @@ fastqscreen_txt="${fastqscreen_txt/.fastq.gz/}"
 fastqscreen_png="${fastqscreen_txt/_screen.txt/_screen.png}"
 fastqscreen_html="${fastqscreen_txt/_screen.txt/_screen.html}"
 
-# unload all loaded modulefiles
 #module purge
 #conda purge
 

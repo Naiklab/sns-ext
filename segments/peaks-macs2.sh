@@ -3,8 +3,6 @@
 
 # MACS peak calling
 
-source ~/.bashrc  # Reload the bashrc file
-
 # script filename
 script_path="${BASH_SOURCE[0]}"
 script_name=$(basename "$script_path")
@@ -75,8 +73,6 @@ bigwig_dir="${proj_dir}/BIGWIG"
 mkdir -p "$bigwig_dir"
 macs_bw="${bigwig_dir}/${sample}.macs2.bw"
 
-# unload all loaded modulefiles
-module purge
 
 #########################
 
@@ -238,7 +234,6 @@ sleep 5
 
 # generate a blacklist-filtered BED file
 
-module purge
 
 #module add bedtools/2.31.0
 

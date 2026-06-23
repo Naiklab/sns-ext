@@ -47,8 +47,6 @@ salmon_quant_genes_sf="${salmon_logs_dir}/quant.genes.sf"
 salmon_quant_log="${salmon_logs_dir}/logs/salmon_quant.log"
 salmon_quant_json="${salmon_logs_dir}/lib_format_counts.json"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

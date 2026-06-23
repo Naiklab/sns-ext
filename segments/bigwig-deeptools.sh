@@ -3,7 +3,6 @@
 
 # deepTools generate BigWig from BAM
 
-source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -50,10 +49,6 @@ bigwig_dir="${proj_dir}/BIGWIG"
 mkdir -p "$bigwig_dir"
 bigwig="${bigwig_dir}/${sample}.bin1.rpkm.bw"
 
-# unload all loaded modulefiles
-module purge
-
-
 #########################
 
 
@@ -70,13 +65,12 @@ fi
 
 # generate bigWig using deepTools
 
-#no module for deeptools/3.5.1 exists in Minerva
-# Loading the conda environment 
-source activate /sc/arion/projects/naiklab/ikjot/conda_envs/deeptools
+code_dir=$(dirname $(dirname "$script_path"))
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 # check that the binary is found
-if [ ! -x "$(command -v deeptools)" ]; then
-	echo -e "\n $script_name ERROR: deeptools module not loaded properly \n" >&2
+if [ ! -x "$(command -v bamCoverage)" ]; then
+	echo -e "\n $script_name ERROR: deeptools not available in pixi environment \n" >&2
 	exit 1
 fi
 

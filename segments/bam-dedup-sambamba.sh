@@ -62,7 +62,6 @@ bam_dd_temp="${dedup_logs_dir}/${sample}.dd.tmp.bam"
 bam_dd_log="${dedup_logs_dir}/${sample}.log.txt"
 bam_dd_flagstat="${dedup_logs_dir}/${sample}.flagstat.txt"
 
-# unload all loaded modulefiles
 #module purge
 #module add default-environment
 

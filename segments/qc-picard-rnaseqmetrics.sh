@@ -37,7 +37,6 @@ metrics_pdf="${metrics_dir}/${sample}.pdf"
 summary_dir="${proj_dir}/summary"
 summary_csv="${summary_dir}/${sample}.${segment_name}.csv"
 
-# unload all loaded modulefiles
 #module purge
 #module add default-environment
 

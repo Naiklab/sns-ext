@@ -46,8 +46,6 @@ bwa_logs_dir="${proj_dir}/logs-${segment_name}"
 mkdir -p "$bwa_logs_dir"
 bwa_flagstat="${bwa_logs_dir}/${sample}.flagstat.txt"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

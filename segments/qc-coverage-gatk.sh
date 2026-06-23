@@ -38,8 +38,6 @@ mkdir -p "$cov_dir"
 out_prefix="${cov_dir}/${sample}"
 gatk_sample_summary="${out_prefix}.sample_summary"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

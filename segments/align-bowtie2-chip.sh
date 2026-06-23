@@ -76,8 +76,6 @@ unfiltered_sam="${logs_dir}/${sample}.unfiltered.sam"
 bowtie2_txt="${logs_dir}/${sample}.bowtie2.txt"
 flagstat_txt="${logs_dir}/${sample}.flagstat.txt"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

@@ -74,8 +74,6 @@ bigwig_dir="${proj_dir}/BIGWIG"
 mkdir -p "$bigwig_dir"
 macs_bw="${bigwig_dir}/${sample}.macs3.bw"
 
-# unload all loaded modulefiles
-module purge
 
 
 #########################
@@ -251,7 +249,6 @@ sleep 5
 
 # generate a blacklist-filtered BED file
 
-module purge
 #module add bedtools/2.31.0
 
 echo

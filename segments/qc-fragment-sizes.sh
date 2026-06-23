@@ -39,8 +39,6 @@ frag_sizes_png="${frag_sizes_dir}/${sample}.sizes.600.png"
 frag_sizes_csv="${frag_sizes_dir}/${sample}.sizes.csv"
 frag_sizes_stats_csv="${frag_sizes_dir}/${sample}.stats.csv"
 
-# unload all loaded modulefiles
-module purge
 
 
 #########################

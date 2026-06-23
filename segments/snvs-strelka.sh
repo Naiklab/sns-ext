@@ -97,8 +97,6 @@ idx_combined="${vcf_dir}/${sample_t}-${sample_n}.all.vcf.idx"
 # annotation command (next segment)
 annot_cmd="bash ${code_dir}/segments/annot-annovar.sh $proj_dir $sample $vcf_combined"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

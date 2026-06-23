@@ -20,34 +20,28 @@ if [ ! $# == 1 ] ; then
 	exit 1
 fi
 
-# standard comparison route arguments
-
-# old approach
-#proj_dir=$(readlink -f "$1")
-#peaks_dir=$(readlink -f "$2")
-#BAM_dir=$(readlink -f "$3")
-#genome=$(readlink -f "$4")
-
-while getopts proj_dir:peaks_dir:bam_dir:genome:sheet flag
-do
-    case "${flag}" in
-        proj_dir) proj=${OPTARG};;
-        peaks_dir) peaks=${OPTARG};;
-        bam_dir) bam=${OPTARG};;
-        genome) genome=${OPTARG};;
-        sheet) sheet=${OPTARG};;
-    esac
-done
+# standard route arguments
+proj_dir=$(readlink -f "$1")
+peaks_dir="${proj_dir}/peaks-MACS2-atac-q-0.05"
+bam_dir="${proj_dir}/BAM"
+sheet="${proj_dir}/samples.groups.csv"
 
 # additional settings
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to R and bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
+genome_build=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-GENOMEBUILD)
+gtf=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-GTF)
+
 # display settings
 echo
-echo " * proj_dir: $proj "
-echo " * peaks_dir: $peaks "
-echo " * BAM_dir: $bam "
-echo " * genome: $genome "
+echo " * proj_dir: $proj_dir "
+echo " * peaks_dir: $peaks_dir "
+echo " * bam_dir: $bam_dir "
+echo " * genome_build: $genome_build "
+echo " * gtf: $gtf "
 echo " * sheet: $sheet "
 echo
 
@@ -67,13 +61,13 @@ if [ ! -d "$peaks_dir" ] ; then
 	exit 1
 fi
 
-if [ ! -d "$BAM_dir" ] ; then
-	echo -e "\n $script_name ERROR: DIR $BAM_dir DOES NOT EXIST \n" >&2
+if [ ! -d "$bam_dir" ] ; then
+	echo -e "\n $script_name ERROR: DIR $bam_dir DOES NOT EXIST \n" >&2
 	exit 1
 fi
 
-if [ ! -d "$genome" ] ; then
-	echo -e "\n $script_name ERROR: -genome not specified, choose between hg38 or mm10 \n" >&2
+if [ -z "$genome_build" ] ; then
+	echo -e "\n $script_name ERROR: genome build not set in settings.txt (REF-GENOMEBUILD) \n" >&2
 	exit 1
 fi
 
@@ -94,8 +88,6 @@ fi
 num_groups=$(cat "$groups_table" | grep -v "SampleID" | cut -d "," -f 2 | sort | uniq | wc -l)
 
 
-# unload all loaded modulefiles
-module purge
 
 
 #########################
@@ -146,19 +138,12 @@ sleep 3
 
 echo -e "\n ========== test R environment ========== \n"
 
-# load relevant modules
-module add R/4.1.0
-
 echo
 echo " * R: $(readlink -f $(which R)) "
 echo " * R version: $(R --version | head -1) "
 echo " * Rscript: $(readlink -f $(which Rscript)) "
 echo " * Rscript version: $(Rscript --version 2>&1) "
 echo
-
-Rscript --vanilla "${code_dir}/scripts/test-package.R" optparse
-Rscript --vanilla "${code_dir}/scripts/test-package.R" mnormt
-Rscript --vanilla "${code_dir}/scripts/test-package.R" limma
 
 sleep 5
 
@@ -167,9 +152,6 @@ sleep 5
 
 
 echo -e "\n ========== start analysis ========== \n"
-
-# extract the genome build from the genome dir
-genome_build=$(basename "$genome_dir")
 
 echo
 echo " * genome: $genome_build "

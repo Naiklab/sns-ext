@@ -95,8 +95,6 @@ else
 	exit 1
 fi
 
-# unload all loaded modulefiles
-module purge
 
 
 #########################

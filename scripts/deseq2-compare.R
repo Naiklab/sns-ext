@@ -3,7 +3,7 @@
 ##
 
 
-deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = NULL) {
+deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = NULL, vsd_mat = NULL, genesets_tbl = NULL) {
 
   suppressPackageStartupMessages({
     library(magrittr)
@@ -39,11 +39,11 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
     res_name = gsub(pattern = pattern, replacement = "", x = mcols(res)[2, 2])
     pos_label = contrast[2]
     neg_label = contrast[3]
-    samples_comp = rownames(subset(colData(deseq_dataset), group %in% contrast[2:3]))
+    samples_comp = rownames(colData(deseq_dataset)[colData(deseq_dataset)[[contrast[1]]] %in% contrast[2:3], , drop = FALSE])
     if (length(samples_comp) < 2) stop("no samples in group")
   } else {
     # not tested in combination with lfcShrink
-    res = results(deseq_dataset, name = name, cooksCutoff = FALSE, addMLE = TRUE,, cooksCutoff = FALSE)
+    res = results(deseq_dataset, name = name, cooksCutoff = FALSE, addMLE = TRUE)
     res_name = name
     pos_label = "Pos"
     neg_label = "Neg"
@@ -102,14 +102,43 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
   message("num genes padj<0.05: ", nrow(subset(res_tbl, padj < 0.05)))
   message("num genes padj<0.01: ", nrow(subset(res_tbl, padj < 0.01)))
   
-  # Extract Cook’s distance matrix
-  cooks <- assays(deseq_dataset)[["cooks"]]
+  # supplementary results with Cook’s distance outlier filtering (99th percentile)
+  # saved to a separate subfolder — tables only, no plots
+  cooks_mat <- assays(deseq_dataset)[["cooks"]]
+  max_cooks_vec <- apply(cooks_mat, 1, max, na.rm = TRUE)
+  cooks_threshold_99 <- quantile(max_cooks_vec, 0.99)
+  outlier_genes_cooks <- names(max_cooks_vec[max_cooks_vec > cooks_threshold_99])
+  n_excluded_cooks <- length(outlier_genes_cooks)
+  message("Cook’s distance filtering (99th pct): ", n_excluded_cooks, " genes excluded")
 
-  # Identify genes where any sample exceeds a defined cutoff
-  max_cooks <- apply(cooks, 1, max, na.rm = TRUE)
-  cooks_threshold <- quantile(max_cooks, 0.99)  # Remove outlier genes with Cook’s distance > 0.99 quantile 
+  res_tbl_cooks <- as_tibble(res, rownames = "gene") %>%
+    dplyr::arrange(padj, pvalue, desc(baseMean)) %>%
+    left_join(res_unshrunk_tbl, by = "gene") %>%
+    dplyr::arrange(padj, pvalue, desc(baseMean)) %>%
+    dplyr::filter(!gene %in% outlier_genes_cooks)
 
-  
+  res_clean_tbl_cooks <-
+    res_tbl_cooks %>%
+    dplyr::mutate(
+      baseMean       = round(baseMean, 1),
+      log2FC         = round(log2FoldChange, 3),
+      log2FCunshrunk = round(log2FCunshrunk, 3),
+      pvalue         = if_else(pvalue < 0.00001, pvalue, round(pvalue, 5)),
+      padj           = if_else(padj < 0.00001, padj, round(padj, 5))
+    ) %>%
+    dplyr::select(gene, baseMean, log2FC, log2FCunshrunk, pvalue, padj)
+
+  cooks_dir <- glue("cooks-filtered-{n_excluded_cooks}genes-excluded")
+  if (!dir.exists(cooks_dir)) dir.create(cooks_dir)
+  write_csv(res_tbl_cooks, glue("{cooks_dir}/dge.{file_suffix}.csv"))
+  Sys.sleep(1)
+  write_xlsx(setNames(list(res_clean_tbl_cooks), strtrim(res_name, 31)), glue("{cooks_dir}/dge.{file_suffix}.xlsx"))
+  Sys.sleep(1)
+  res_padj005_cooks <- subset(res_clean_tbl_cooks, padj < 0.05)
+  write_xlsx(setNames(list(res_padj005_cooks), strtrim(res_name, 31)), glue("{cooks_dir}/dge.{file_suffix}.q005.xlsx"))
+  message("Cook’s filtered supplementary results saved to: ", cooks_dir)
+  Sys.sleep(1)
+
   # save differential expression results in Excel format
   res_xlsx = glue("dge.{file_suffix}.xlsx")
   write_xlsx(setNames(list(res_clean_tbl), strtrim(res_name, 31)), res_xlsx)
@@ -136,17 +165,17 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
     file_prefix = glue("{volcano_dir}/volcano.{file_suffix}")
   )
 
-  # heatmap variance stabilized values matrix
-  vsd = assay(varianceStabilizingTransformation(deseq_dataset, blind = TRUE))
+  # heatmap variance stabilized values matrix (use pre-computed matrix if provided)
+  vsd = if (!is.null(vsd_mat)) vsd_mat else assay(varianceStabilizingTransformation(deseq_dataset, blind = TRUE))
 
   # all samples and the subset used for the comparison
   samples_all = colnames(deseq_dataset)
   samples_comp = samples_all
-  if(!is.null(contrast)) { samples_comp = rownames(subset(colData(deseq_dataset), group %in% contrast[2:3])) }
+  if(!is.null(contrast)) { samples_comp = rownames(colData(deseq_dataset)[colData(deseq_dataset)[[contrast[1]]] %in% contrast[2:3], , drop = FALSE]) }
 
-  # heatmap sample annotation (colData columns are "group" and "sizeFactor")
+  group_col = if (!is.null(contrast)) contrast[1] else colnames(colData(deseq_dataset))[1]
   samples_groups = as.data.frame(colData(deseq_dataset))
-  samples_groups = samples_groups[, "group", drop = FALSE]
+  samples_groups = samples_groups[, group_col, drop = FALSE]
 
   # heatmap gene subsets (list with genes, plot title, and file suffix)
   hmg = list()
@@ -209,7 +238,8 @@ deseq2_compare = function(deseq_dataset, contrast = NULL, name = NULL, genome = 
   gse_fgsea(
     stats_df = res_filtered_tbl, gene_col = "gene", rank_col = "log2FoldChange", species = genome,
     title = res_name, pos_label = pos_label, neg_label = neg_label,
-    file_prefix = glue("{gse_dir}/gse.{file_suffix}")
+    file_prefix = glue("{gse_dir}/gse.{file_suffix}"),
+    genesets_tbl = genesets_tbl
   )
 
 }

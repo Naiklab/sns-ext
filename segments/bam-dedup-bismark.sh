@@ -67,8 +67,6 @@ bismark_report_deduplication="${bismark_report_dir}/${sample}_bismark_bt2_pe.ded
 bismark_bam_dd_original="${bismark_dd_logs_dir}/${sample}.deduplicated.bam"
 bismark_dd_report_original="${bismark_dd_logs_dir}/${sample}.deduplication_report.txt"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

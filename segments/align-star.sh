@@ -50,7 +50,6 @@ star_logs_dir="${proj_dir}/logs-${segment_name}"
 mkdir -p "$star_logs_dir"
 star_prefix="${star_logs_dir}/${sample}_"
 
-# unload all loaded modulefiles
 #module purge
 #module add default-environment
 

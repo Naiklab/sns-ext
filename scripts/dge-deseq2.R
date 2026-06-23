@@ -121,8 +121,11 @@ if (length(diff_samples)) stop("some samples not in counts table: ", toString(di
 # subset to samples in groups table (also sets samples to be in the same order)
 counts_table = counts_table[, rownames(groups_table)] %>% rownames_to_column(var = "gene")
 
-# Removing pseudo genes
-counts_table = counts_table %>% dplyr::filter(!grepl("^Gm", gene) & !grepl("Rik$", gene)) %>% column_to_rownames(var = "gene")
+# remove mouse pseudo-genes (Gm* and *Rik naming conventions are mouse-specific)
+if (genome_build %in% c("mm9", "mm10", "mm39")) {
+  counts_table = counts_table %>% dplyr::filter(!grepl("^Gm", gene) & !grepl("Rik$", gene))
+}
+counts_table = counts_table %>% column_to_rownames(var = "gene")
 
 message("subset counts table gene num:     ", nrow(counts_table))
 message("subset counts table sample num:   ", ncol(counts_table))
@@ -144,12 +147,12 @@ message("design formula: ", design_formula)
 
 message(" ========== import GTF genes annotations ========== ")
 
-# import GTF using rtracklayer
-genes_gr = rtracklayer::import(genes_gtf)
-message("GTF total entries:      ", length(genes_gr))
+# import GTF once; genes and exons are both subsetted from this object below
+gtf_gr = rtracklayer::import(genes_gtf)
+message("GTF total entries:      ", length(gtf_gr))
 
 # genes list (remove genes without a "gene_name" since they can't be properly identified)
-genes_gr = subset(genes_gr, type == "gene" & !is.na(gene_name))
+genes_gr = subset(gtf_gr, type == "gene" & !is.na(gene_name))
 genes_gr = genes_gr[!duplicated(genes_gr$gene_name)]
 names(genes_gr) = genes_gr$gene_name
 genes_gr = sortSeqlevels(genes_gr)
@@ -164,9 +167,8 @@ genes_tbl = genes_gr %>% as.data.frame()
 genes_tbl = genes_tbl %>% select(gene_name, gene_id, chr = seqnames, start, end, strand, gene_type)
 write_csv(genes_tbl, "genes.csv")
 
-# extract exons for gene length calculations (for TPM/FPKM)
-exons_gr = rtracklayer::import(genes_gtf)
-exons_gr = subset(exons_gr, type == "exon" & !is.na(gene_name))
+# extract exons for gene length calculations (reuses already-imported GTF)
+exons_gr = subset(gtf_gr, type == "exon" & !is.na(gene_name))
 message("GTF num exons:          ", length(exons_gr))
 
 # get gene lengths as the sum of non-overlapping exon lengths for each gene
@@ -233,18 +235,13 @@ write_csv(cpm_table, "counts.cpm.csv.gz")
 write_xlsx(list(CPMs = cpm_table), "counts.cpm.xlsx")
 Sys.sleep(1)
 
-# Calculate TPMs directly from normalized counts and gene lengths
-# TPM = (count / gene_length) * 1e6 / sum(count / gene_length)
-norm_counts_mat = counts(dds, normalized = TRUE)
+# Calculate TPMs from raw counts and gene lengths
+# TPM = (raw_count / gene_length_kb) / sum(raw_count / gene_length_kb) * 1e6
+raw_counts_for_tpm = counts(dds, normalized = FALSE)
+gene_lengths_subset = gene_lengths[rownames(raw_counts_for_tpm)]
 
-# Subset gene_lengths to match genes in dds
-gene_lengths_subset = gene_lengths[rownames(norm_counts_mat)]
-
-# Calculate TPM for genes with known lengths
-tpm_matrix = apply(norm_counts_mat, 2, function(counts_col) {
-  # Divide by gene length (in kb) 
+tpm_matrix = apply(raw_counts_for_tpm, 2, function(counts_col) {
   rpk = counts_col / (gene_lengths_subset / 1000)
-  # Normalize to per million
   tpm = rpk / sum(rpk, na.rm = TRUE) * 1e6
   return(tpm)
 })
@@ -287,6 +284,20 @@ if (ncol(dds) > 10) {
 
 message(" ========== differential expression ========== ")
 
+# pre-fetch MSigDB gene sets once so they are not re-downloaded per comparison
+genesets_tbl = NULL
+msigdb_species = switch(genome_build,
+  hg19 = "Homo sapiens", hg38 = "Homo sapiens",
+  mm9  = "Mus musculus",  mm10 = "Mus musculus",
+  rn6  = "Rattus norvegicus",
+  NULL
+)
+if (!is.null(msigdb_species)) {
+  message("pre-fetching MSigDB gene sets for: ", msigdb_species)
+  genesets_tbl = msigdbr(species = msigdb_species) %>% dplyr::mutate(gs_name = str_trunc(gs_name, 100))
+  message("MSigDB entries loaded: ", nrow(genesets_tbl))
+}
+
 # perform comparisons for all combinations of group levels
 if (length(group_levels) > 1) {
   group_levels_combinations = combn(group_levels, m = 2, simplify = TRUE)
@@ -295,7 +306,13 @@ if (length(group_levels) > 1) {
     level_numerator = group_levels_combinations[2, combination_num]
     level_denominator = group_levels_combinations[1, combination_num]
     message(glue("comparison : {group_name} : {level_numerator} vs {level_denominator}"))
-    deseq2_compare(deseq_dataset = dds, contrast = c(group_name, level_numerator, level_denominator), genome = genome_build)
+    deseq2_compare(
+      deseq_dataset = dds,
+      contrast = c(group_name, level_numerator, level_denominator),
+      genome = genome_build,
+      vsd_mat = assay(vsd),
+      genesets_tbl = genesets_tbl
+    )
   }
 }
 

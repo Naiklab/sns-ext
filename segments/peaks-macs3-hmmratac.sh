@@ -45,8 +45,6 @@ peaks_cutoff_tsv="${macs_logs_dir}/${sample}_cutoff_analysis.tsv"
 peaks_model_json="${macs_logs_dir}/${sample}_model.json"
 peaks_file="${macs_logs_dir}/${sample}_accessible_regions.gappedPeak"
 
-# unload all loaded modulefiles
-module purge
 
 
 #########################
@@ -90,7 +88,6 @@ blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.tx
 
 # MACS3 is part of condaenvs/2023/macs3 module
 
-module purge
 #module add macs/3.0.2
 source activate $MACS3_ENV # Contains sambamba
 

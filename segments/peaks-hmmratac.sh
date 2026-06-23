@@ -47,8 +47,6 @@ out_prefix="${hmmratac_logs_dir}/${sample}"
 peaks_gappedpeak="${hmmratac_logs_dir}/${sample}_peaks.gappedPeak"
 summits_bed_original="${hmmratac_logs_dir}/${sample}_summits.bed"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

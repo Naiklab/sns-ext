@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ~/.bashrc  # Reload the bashrc file
-
 ##
 ## ATAC-seq using Bowtie 2
 ##
@@ -114,20 +112,19 @@ fi
 
 # generate BigWig (deeptools)
 segment_bw_deeptools="bigwig-deeptools"
-bash_cmd="bash ${code_dir}/segments/${segment_bw_deeptools}.sh $proj_dir $sample 4 $bam_star"
-bsub_cmd="bsub -W 48:00 -R rusage[mem=16000] -R span[hosts=1] -R himem -P ${account_name}  -n ${threads} -q premium -J sns.${segment_bw_deeptools}.${sample} ${bash_cmd}"
-echo "CMD: $bsub_cmd"
-(eval $bsub_cmd)
+bash_cmd="bash ${code_dir}/segments/${segment_bw_deeptools}.sh $proj_dir $sample $threads $bam_dd"
+echo "CMD: $bash_cmd"
+eval "$bash_cmd"
 
 # fragment size distribution
 segment_qc_frag_size="qc-fragment-sizes"
 bash_cmd="bash ${code_dir}/segments/${segment_qc_frag_size}.sh $proj_dir $sample $bam_dd"
-($bash_cmd)
+eval "$bash_cmd"
 
 # call peaks with MACS2
 segment_peaks_macs2="peaks-macs2"
 bash_cmd="bash ${code_dir}/segments/${segment_peaks_macs2}.sh $proj_dir atac 0.05 $sample $bam_dd"
-($bash_cmd)
+eval "$bash_cmd"
 
 # call peaks with HMMRATAC (original Java implementation) - Disregard this step
 #segment_peaks_hmmratac="peaks-hmmratac"
@@ -160,8 +157,6 @@ ${proj_dir}/summary.${segment_fastq_clean}.csv \
 ${proj_dir}/summary.${segment_align}.csv \
 ${proj_dir}/summary.${segment_dedup}.csv \
 ${proj_dir}/summary.${segment_peaks_macs2}-atac-q-0.05.csv \
-${proj_dir}/summary.${segment_peaks_hmmratac}-score-30.csv \
-${proj_dir}/summary.${segment_peaks_macs3_hmmratac}.csv \
 > $summary_csv
 "
 (eval $bash_cmd)

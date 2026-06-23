@@ -53,8 +53,6 @@ gatk_rc_table2="${gatk_logs_dir}/${sample}.table2.txt"
 gatk_rc_csv="${gatk_logs_dir}/${sample}.csv"
 gatk_rc_pdf="${gatk_logs_dir}/${sample}.pdf"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

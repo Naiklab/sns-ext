@@ -82,8 +82,6 @@ unfiltered_sam="${logs_dir}/${sample}.unfiltered.sam"
 bowtie2_txt="${logs_dir}/${sample}.bowtie2.txt"
 flagstat_txt="${logs_dir}/${sample}.flagstat.txt"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 
@@ -196,7 +194,6 @@ echo "READS CHR M: $reads_chrM"
 
 #########################
 
-module purge 
 
 source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Contains sambamba
 

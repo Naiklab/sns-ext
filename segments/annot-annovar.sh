@@ -50,8 +50,6 @@ annovar_out_fixed="${annovar_out_prefix}.annot.txt"
 annovar_combined="${annovar_out_prefix}.combined.txt"
 vcf_table="${annovar_out_prefix}.vcf.txt"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

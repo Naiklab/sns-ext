@@ -72,8 +72,6 @@ else
 	fastq_R2_trim=""
 fi
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

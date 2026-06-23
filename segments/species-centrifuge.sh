@@ -66,8 +66,6 @@ mkdir -p "$logs_dir"
 results_txt="${logs_dir}/${sample}.results.txt"
 report_txt="${logs_dir}/${sample}.report.txt"
 
-# unload all loaded modulefiles
-module purge
 
 
 #########################

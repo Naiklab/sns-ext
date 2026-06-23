@@ -128,13 +128,6 @@ sub run_samples {
 	my $route_script = $_[2];
 	my $samples_csv = $_[3];
 	my $alloc_acc = "acc_naiklab";
-	# get the maximum runtime for route (for bsub)
-	my $route_time = `cat $route_script | grep -m 1 "BSUB_RUNTIME="`;
-	chomp($route_time);
-	$route_time =~ s/.*=//;
-	if (length($route_time) < 3 || length($route_time) > 15) {
-		die "\n\n ERROR: ROUTE RUNTIME $route_time NOT PROPERLY SPECIFIED IN ROUTE \n\n";
-	}
 
 	# find unique samples based on the sample sheet
 	my @unique_samples = `cat $samples_csv | cut -d ',' -f 1 | LC_ALL=C sort | uniq`;
@@ -159,13 +152,8 @@ sub run_samples {
 		}
 	}
 
-	# request fewer threads per sample for larger projects (extra thread for overhead)
 	my $num_samples = @unique_samples;
 	my $threads = "9";
-	if ($num_samples > 50) {
-		# deactivated due to causing memory issues in rare cases
-		#$threads = "5";
-	}
 
 	# process each sample
 	my $current_sample = 1;
@@ -226,7 +214,7 @@ sub run_groups {
 	# system($cmd);
 
 	# bsub command
-	my $email = '{USER}@mssm.edu';
+	my $email = '${USER}@mssm.edu';
 	$email = `echo $email`;
 	chomp($email);
 	my $bsub_name = "-J sns.${route}";

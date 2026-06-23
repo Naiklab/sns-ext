@@ -96,8 +96,6 @@ bismark_bam_original="${bismark_logs_dir}/${bismark_id}${suffix_bam}"
 bismark_report_original="${bismark_logs_dir}/${bismark_id}${suffix_report}"
 bismark_nucstats_original="${bismark_logs_dir}/${bismark_id}${suffix_nucstats}"
 
-# unload all loaded modulefiles
-module purge
 #module add default-environment
 
 

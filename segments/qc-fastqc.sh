@@ -37,7 +37,6 @@ fastqc_basename=${fastqc_basename/%.fastq.gz/_fastqc}
 report_html="${out_dir}/${fastqc_basename}.html"
 report_zip="${out_dir}/${fastqc_basename}.zip"
 
-# unload all loaded modulefiles
 #module purge
 
 
