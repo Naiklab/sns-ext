@@ -398,7 +398,7 @@ fi
 
 # create a combined VCF with Picard MergeVcfs (proper handling of header and tags)
 
-#module add picard-tools/2.18.20
+#module add picard/2.18.17
 
 picard_jar="${PICARD_ROOT}/libs/picard.jar"
 picard_base_cmd="java -Xms8G -Xmx8G -jar $picard_jar MergeVcfs VERBOSITY=WARNING QUIET=true"

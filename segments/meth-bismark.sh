@@ -128,8 +128,8 @@ fi
 
 # bismark_methylation_extractor
 
-# bismark/0.22.1 loads bowtie2 and samtools (no version specified)
-#module add bismark/0.22.1
+# bismark/0.22.3 loads bowtie2 and samtools (no version specified)
+#module add bismark/0.22.3
 
 # navigate to the output dir
 mkdir -p "$bismark_meth_dir"
@@ -236,7 +236,7 @@ $CMD
 
 # convert bedgraph to bigwig
 
-#module add ucscutils/374
+#module add ucsc-utils/2023-10-17
 
 bigwig_dir="${proj_dir}/BIGWIG-Bismark"
 bigwig="${bigwig_dir}/${sample}.bw"

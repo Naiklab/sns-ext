@@ -298,8 +298,8 @@ fi
 
 #source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Not needed any more since we are using pixi
 
-# ucscutils/374 requires mariadb/5.5.64 to be loaded
-#module add ucscutils/374 - Added path to directory with ucsc_utils paths
+# ucsc-utils/2023-10-17 (replaces ucscutils/374; mariadb no longer required)
+#module add ucsc-utils/2023-10-17
 #module add mariadb/5.5.64 - Included in conda environment - rna-star
 
 

@@ -226,7 +226,7 @@ fi
 # generate an image about the model based on the data
 # --nomodel will bypass building the shifting model
 
-#module add r/4.1.2
+#module add R/4.1.0
 
 if [ -s "$model_r" ] ; then
 
@@ -252,7 +252,7 @@ sleep 5
 # generate a blacklist-filtered BED file
 
 module purge
-#module add bedtools/2.30.0
+#module add bedtools/2.31.0
 
 echo
 echo " * bedtools: $(readlink -f $(which bedtools)) "
@@ -304,8 +304,8 @@ if [ ! -s "$macs_bdg_treat" ] ; then
 	exit 1
 fi
 
-# ucscutils/374 requires mariadb/5.5.64 to be loaded
-#module add ucscutils/374
+# ucsc-utils/2023-10-17 (replaces ucscutils/374; mariadb no longer required)
+#module add ucsc-utils/2023-10-17
 #module add mariadb/5.5.64
 
 if [ ! -s "$macs_bw" ] ; then

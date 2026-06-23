@@ -179,7 +179,7 @@ fi
 
 # extract variant info (quality, depth, frequency) from a VCF in a table format for merging with annotations
 
-#module add r/3.6.1
+#module add R/3.6.3
 
 echo
 echo " * R: $(readlink -f $(which R)) "

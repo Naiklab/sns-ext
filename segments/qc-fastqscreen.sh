@@ -86,9 +86,9 @@ fi
 # fastq_screen
 # ignore paired reads (in case of rna-seq, paired reads may be too far apart and will not align)
 
-#module add fastq_screen/0.13.0 - Not available in Minerva
+#module add fastq_screen/0.13.0
 # ImageMagick for "montage" for combining plots
-#module add imagemagick/7.0.8 - Not available in Minerva
+#module add imagemagick/7.0.8-47
 
 # Using pixi environment (fastq_screen and imagemagick available)
 

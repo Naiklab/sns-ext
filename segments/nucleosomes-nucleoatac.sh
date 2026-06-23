@@ -122,9 +122,9 @@ fi
 
 # MACS to call broad peaks
 
-# MACS is part of python/2.7.3 module
+# MACS - python/2.7.16 available on Minerva
 module unload python
-#module load python/2.7.3
+#module load python/2.7.16
 
 echo " * MACS: $(readlink -f $(which macs2)) "
 echo " * MACS version: $(macs2 --version 2>&1) "
@@ -194,7 +194,7 @@ source /ifs/home/id460/.virtualenvs/nucleoatac/bin/activate
 
 # cython has issues with gcc 4.4
 module unload gcc
-#module load gcc/6.1.0
+#module load gcc/6.3.0
 
 echo " * NucleoATAC: $(readlink -f $(which nucleoatac)) "
 echo " * NucleoATAC version: $(nucleoatac --version 2>&1 | grep 'version' | grep -v 'Command') "
@@ -219,7 +219,7 @@ deactivate
 
 # return to normal python environment
 module unload python
-#module load python/2.7.3
+#module load python/2.7.16
 
 
 #########################
@@ -257,7 +257,7 @@ fi
 
 # convert bedGraphs to bigWigs for easier consumption
 
-#module load kentutils/329
+#module load ucsc-utils/2023-10-17
 
 echo " * OCC bedGraph: $nucleoatac_occ_bg "
 echo " * OCC bigWig: $nucleoatac_occ_bw "

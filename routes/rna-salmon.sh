@@ -18,6 +18,9 @@ if [ ! $# == 2 ] ; then
 	echo -e "\n USAGE: $script_name project_dir sample_name \n" >&2
 	exit 1
 fi
+# Allocation account and time
+account_name="acc_naiklab"
+alloc_time="48:00"
 
 # standard route arguments
 proj_dir=$(readlink -f "$1")
@@ -26,24 +29,30 @@ sample=$2
 # paths
 code_dir=$(dirname $(dirname "$script_path"))
 
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
+# load required modules
+module load salmon/1.4.0
+
 # reserve a thread for overhead
-threads=$SLURM_CPUS_PER_TASK
+threads=6
 threads=$(( threads - 1 ))
+
+# specify maximum runtime for bsub job
+
+#BSUB_RUNTIME=48:00
 
 # display settings
 echo
 echo " * proj_dir: $proj_dir "
 echo " * sample: $sample "
 echo " * code_dir: $code_dir "
-echo " * slurm threads: $SLURM_CPUS_PER_TASK "
+echo " * bsubthreads: $threads "
 echo " * command threads: $threads "
+echo " * alloc_account: $account_name "
+echo " * alloc_time: $alloc_time "
 echo
-
-# load required modules
-module load salmon/1.4.0
-
-# specify maximum runtime for sbatch job
-# SBATCHTIME=6:00:00
 
 
 #########################
@@ -57,7 +66,7 @@ fastq_R1=$(grep -s -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_clean
 fastq_R2=$(grep -s -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_clean}.csv" | cut -d ',' -f 3)
 if [ -z "$fastq_R1" ] ; then
 	bash_cmd="bash ${code_dir}/segments/${segment_fastq_clean}.sh $proj_dir $sample"
-	($bash_cmd)
+	eval "$bash_cmd"
 	fastq_R1=$(grep -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_clean}.csv" | cut -d ',' -f 2)
 	fastq_R2=$(grep -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_clean}.csv" | cut -d ',' -f 3)
 fi
@@ -71,10 +80,10 @@ fi
 # run FastQC (separately for paired-end reads)
 segment_qc_fastqc="qc-fastqc"
 bash_cmd="bash ${code_dir}/segments/${segment_qc_fastqc}.sh $proj_dir $sample $threads $fastq_R1"
-($bash_cmd)
+eval "$bash_cmd"
 if [ -n "$fastq_R2" ] ; then
 	bash_cmd="bash ${code_dir}/segments/${segment_qc_fastqc}.sh $proj_dir $sample $threads $fastq_R2"
-	($bash_cmd)
+	eval "$bash_cmd"
 fi
 
 # fastq_screen
@@ -87,7 +96,7 @@ fastq_R1_trimmed=$(grep -s -m 1 "^${sample}," "${proj_dir}/samples.${segment_fas
 fastq_R2_trimmed=$(grep -s -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_trim}.csv" | cut -d ',' -f 3)
 if [ -z "$fastq_R1_trimmed" ] ; then
 	bash_cmd="bash ${code_dir}/segments/${segment_fastq_trim}.sh $proj_dir $sample $threads $fastq_R1 $fastq_R2"
-	($bash_cmd)
+	eval "$bash_cmd"
 	fastq_R1_trimmed=$(grep -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_trim}.csv" | cut -d ',' -f 2)
 	fastq_R2_trimmed=$(grep -m 1 "^${sample}," "${proj_dir}/samples.${segment_fastq_trim}.csv" | cut -d ',' -f 3)
 fi
@@ -101,7 +110,7 @@ fi
 # Salmon
 segment_quant="quant-salmon"
 bash_cmd="bash ${code_dir}/segments/${segment_quant}.sh $proj_dir $sample $threads $fastq_R1_trimmed $fastq_R2_trimmed"
-($bash_cmd)
+eval "$bash_cmd"
 
 
 #########################

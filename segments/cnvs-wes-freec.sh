@@ -206,12 +206,12 @@ fi
 
 # generate FREEC-compatible references
 
-# FREEC compiled with GCC 6.1.0 (load same GCC when running)
-#module add gcc/6.1.0
+# FREEC compiled with GCC 6.3.0 (load same GCC when running)
+#module add gcc/6.3.0
 # bedtools to create .pileup files for WES data
 #module add bedtools/2.27.1
 # samtools to create .pileup files (for BAF) (even with sambamba enabled)
-#module add samtools/1.3
+#module add samtools/1.6
 
 # clean up probes BED
 fix_probes_cmd="
@@ -450,8 +450,7 @@ rm -fv "$minipileup_control"
 
 # clean up the environment before loading R module to avoid GCC conflicts
 module purge
-#module add default-environment
-#module add r/3.6.1
+#module add R/3.6.3
 
 echo
 echo " * R: $(readlink -f $(which R)) "

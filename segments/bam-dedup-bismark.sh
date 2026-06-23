@@ -89,8 +89,8 @@ fi
 
 # run deduplicate_bismark
 
-# bismark/0.22.1 loads bowtie2 and samtools (no version specified)
-#module add bismark/0.22.1
+# bismark/0.22.3 loads bowtie2 and samtools (no version specified)
+#module add bismark/0.22.3
 
 echo
 echo " * Bismark: $(readlink -f $(which deduplicate_bismark)) "

@@ -96,7 +96,6 @@ num_groups=$(cat "$groups_table" | grep -v "SampleID" | cut -d "," -f 2 | sort |
 
 # unload all loaded modulefiles
 module purge
-module add default-environment
 
 
 #########################
@@ -148,7 +147,7 @@ sleep 3
 echo -e "\n ========== test R environment ========== \n"
 
 # load relevant modules
-module add r/4.1.2
+module add R/4.1.0
 
 echo
 echo " * R: $(readlink -f $(which R)) "

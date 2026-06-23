@@ -120,8 +120,8 @@ fi
 
 # bismark can't use sorted bam at the next step, but other tools may need sorted bam
 
-# bismark/0.22.1 loads bowtie2 and samtools (no version specified)
-#module add bismark/0.22.1
+# bismark/0.22.3 loads bowtie2 and samtools (no version specified)
+#module add bismark/0.22.3
 
 # "In order to work properly the current working directory must contain the sequence files to be analysed" (as of v0.14)
 fastq_dir=$(dirname "$fastq_R1")

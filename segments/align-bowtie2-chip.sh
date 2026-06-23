@@ -117,7 +117,7 @@ fi
 # step 3: sort BAM
 # to do: add Picard AddOrReplaceReadGroups for extra compatibility
 
-#module add bowtie2/2.3.4.1
+#module add bowtie2/2.4.1
 #module add samtools/1.9
 #module add sambamba/0.6.8
 

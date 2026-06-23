@@ -194,7 +194,7 @@ fi
 # "you can just add fake columns"
 # http://csb5.github.io/lofreq/2015/11/23/where-are-the-format-and-sample-fields/
 
-#module add python/cpu/2.7.15
+#module add python/2.7.17
 
 echo
 echo " * lofreq2_add_fake_gt.py: $(readlink -f $(which $lofreq_gt_py)) "
