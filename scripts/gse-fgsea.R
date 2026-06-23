@@ -73,14 +73,19 @@ gse_fgsea = function(stats_df, gene_col, rank_col, species, title = "", pos_labe
   # specify categories of interest (split C2 and C5 by sub-categories)
   # MSigDB 7.1 split TFT category
   # MSigDB 7.2 renamed GO categories
+  # MSigDB 10+ renamed gs_cat/gs_subcat to gs_collection/gs_subcollection
+  # MSigDB 10+ split KEGG into KEGG_LEGACY and KEGG_MEDICUS; TFT_Legacy renamed TFT_LEGACY
   geneset_cats =
     c(
       "Hallmark" = "H",
       "Chemical and Genetic Perturbations" = "CGP",
+      "KEGG Legacy" = "CP:KEGG_LEGACY",
+      "KEGG Medicus" = "CP:KEGG_MEDICUS",
       "KEGG" = "CP:KEGG",
       "Pathway Interaction Database" = "CP:PID",
       "Reactome" = "CP:REACTOME",
       "Transcription Factor Targets" = "TFT",
+      "Transcription Factor Targets" = "TFT:TFT_LEGACY",
       "Transcription Factor Targets" = "TFT:TFT_Legacy",
       "GTRD Transcription Factor Targets" = "TFT:GTRD",
       "GO Biological Process" = "BP",
@@ -93,7 +98,7 @@ gse_fgsea = function(stats_df, gene_col, rank_col, species, title = "", pos_labe
     )
 
   # get the available gene set categories (varies depending on the MSigDB version)
-  geneset_cats_msigdb = c(dplyr::pull(genesets_tbl, gs_cat), dplyr::pull(genesets_tbl, gs_subcat))
+  geneset_cats_msigdb = c(dplyr::pull(genesets_tbl, gs_collection), dplyr::pull(genesets_tbl, gs_subcollection))
   geneset_cats_msigdb = unique(geneset_cats_msigdb)
   geneset_cats = geneset_cats[geneset_cats %in% geneset_cats_msigdb]
 
@@ -110,15 +115,16 @@ gse_fgsea = function(stats_df, gene_col, rank_col, species, title = "", pos_labe
     geneset_prefix = glue("{file_prefix}.fgsea.{geneset_cat_str}")
 
     # extract relevant gene sets
-    geneset_list = genesets_tbl %>% filter(gs_cat == geneset_cat)
+    geneset_list = genesets_tbl %>% filter(gs_collection == geneset_cat)
     if (nrow(geneset_list) == 0) {
-      geneset_list = genesets_tbl %>% filter(gs_subcat == geneset_cat)
+      geneset_list = genesets_tbl %>% filter(gs_subcollection == geneset_cat)
     }
     geneset_list = split(x = geneset_list$gene_symbol, f = geneset_list$gs_name)
 
     # run preranked gene set enrichment analysis (using tryCatch to ignore potential errors)
     bpparam = BiocParallel::MulticoreParam(4)
     set.seed(99)
+    fgsea_res = NULL
     tryCatch(
       {
         fgsea_res = fgseaMultilevel(pathways = geneset_list, stats = ranks, minSize = 10, nPermSimple = 10000, BPPARAM = bpparam)
@@ -127,6 +133,7 @@ gse_fgsea = function(stats_df, gene_col, rank_col, species, title = "", pos_labe
         message("fgseaMultilevel error:", conditionMessage(e))
       }
     )
+    if (is.null(fgsea_res)) next
 
     # export fgsea results table (fgseaMultilevel replaces nMoreExtreme with log2err)
     fgsea_res$leading_edge_genes = sapply(fgsea_res$leadingEdge, paste, collapse = "|")
