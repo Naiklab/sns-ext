@@ -1,6 +1,5 @@
 #!/bin/bash
 
-source ~/.bashrc # Needed for conda initialization
 
 # remove duplicates using sambamba
 
@@ -42,6 +41,12 @@ fi
 
 
 #########################
+
+
+code_dir=$(dirname $(dirname "${BASH_SOURCE[0]}"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 
 # settings and files
@@ -92,7 +97,6 @@ fi
 
 # sambamba markdup
 
-source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Contains sambamba
 
 echo
 echo " * sambamba: $(readlink -f $(which sambamba)) "

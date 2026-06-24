@@ -40,10 +40,11 @@ if [ ! -s "$fastq" ] ; then
 	exit 1
 fi
 
-fastqscreen_conf="/gpfs/data/igorlab/software/fastq_screen/fastq_screen_v0.13.0/fastq_screen.species.conf"
+code_dir=$(dirname $(dirname "$script_path"))
+fastqscreen_conf=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-FASTQSCREEN-SPECIES)
 
 if [ ! -s "$fastqscreen_conf" ] ; then
-	echo -e "\n $script_name ERROR: CONF $fastqscreen_conf DOES NOT EXIST \n" >&2
+	echo -e "\n $script_name ERROR: REF-FASTQSCREEN-SPECIES $fastqscreen_conf DOES NOT EXIST (add to settings.txt) \n" >&2
 	exit 1
 fi
 

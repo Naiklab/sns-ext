@@ -48,7 +48,7 @@ summary_csv="${summary_dir}/${sample}.${segment_name}.csv"
 
 if [ -s "$metrics_txt" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 

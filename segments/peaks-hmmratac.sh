@@ -97,7 +97,7 @@ fi
 
 if [ -s "$peaks_bed" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 
@@ -106,13 +106,9 @@ fi
 
 # run HMMRATAC
 
-hmmratac_jar="/gpfs/data/igorlab/software/HMMRATAC/HMMRATAC_V1.2.10_exe.jar"
-
-# check that the HMMRATAC jar file is present
-if [ ! -s "$hmmratac_jar" ] ; then
-	echo -e "\n $script_name ERROR: jar file $hmmratac_jar does not exist \n" >&2
-	exit 1
-fi
+# HMMRATAC is not available on Minerva — use peaks-macs3-hmmratac.sh instead
+echo -e "\n $script_name ERROR: HMMRATAC jar is not available on Minerva — use segments/peaks-macs3-hmmratac.sh instead \n" >&2
+exit 1
 
 # --bam <BAM> sorted BAM file containing the ATAC-seq reads
 # --index <BAI> index file for the sorted BAM File

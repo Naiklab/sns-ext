@@ -88,8 +88,8 @@ echo " * Rscript version: $(Rscript --version 2>&1) "
 echo
 
 # test R
-Rscript --vanilla "${code_dir}/scripts/test-package.R" getopt
-Rscript --vanilla "${code_dir}/scripts/test-package.R" optparse
+Rscript --vanilla "${code_dir}/scripts/test-package.R" Rsamtools
+Rscript --vanilla "${code_dir}/scripts/test-package.R" cowplot
 
 # navigate to frag sizes dir
 cd "$frag_sizes_dir" || exit 1

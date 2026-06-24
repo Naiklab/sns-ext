@@ -95,7 +95,7 @@ if [ -s "$bam" ] && [ -s "$bai" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
 	echo -e "\n $script_name ADD $sample TO $samples_csv \n" >&2
 	echo "${sample},${bam}" >> "$samples_csv"
-	exit 1
+	exit 0
 fi
 
 # delete BAM (likely incomplete since the corresponding BAI was not generated)
@@ -195,10 +195,10 @@ echo "READS CHR M: $reads_chrM"
 #########################
 
 
-source activate /sc/arion/projects/naiklab/ikjot/conda_envs/atac-star # Contains sambamba
+sambamba_bin="sambamba"
 
-echo " * sambamba: $(readlink -f $(which $sambamba_bin)) "
-echo " * sambamba version: $($sambamba_bin 2>&1 | grep -m 1 'sambamba') "
+echo " * sambamba: $(readlink -f $(which sambamba)) "
+echo " * sambamba version: $(sambamba 2>&1 | grep -m 1 'sambamba') "
 
 # filter and sort BAM
 

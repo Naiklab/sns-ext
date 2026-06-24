@@ -92,6 +92,9 @@ if (is.null(txi_gene)) {
   }
 }
 
+if (is.null(txi_gene)) stop("tximport gene-level import failed — check GTF/index transcript ID compatibility")
+if (is.null(txi_tx)) stop("tximport transcript-level import failed — check GTF/index transcript ID compatibility")
+
 message("num imported samples:     ", ncol(txi_gene$counts))
 message("num imported genes:       ", nrow(txi_gene$counts))
 message("num imported transcripts: ", nrow(txi_tx$counts))

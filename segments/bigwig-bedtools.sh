@@ -38,6 +38,10 @@ if [ ! -s "$bam" ] || [ ! "$bam" ] ; then
 fi
 
 code_dir=$(dirname "$(dirname "${BASH_SOURCE[0]}")")
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
 chrom_sizes=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.txt" REF-CHROMSIZES);
 
 if [ ! -s "$chrom_sizes" ] ; then
@@ -64,7 +68,7 @@ bigwig="${BIGWIG_DIR}/${sample}.norm.bw"
 
 if [ -s "$bigwig" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 

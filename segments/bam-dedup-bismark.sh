@@ -78,7 +78,7 @@ bismark_dd_report_original="${bismark_dd_logs_dir}/${sample}.deduplication_repor
 if [ -s "$bismark_bam_dd_final" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
 	echo "${sample},${bismark_bam_dd_final}" >> "$samples_csv"
-	exit 1
+	exit 0
 fi
 
 
@@ -87,8 +87,10 @@ fi
 
 # run deduplicate_bismark
 
-# bismark/0.22.3 loads bowtie2 and samtools (no version specified)
-#module add bismark/0.22.3
+code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
 
 echo
 echo " * Bismark: $(readlink -f $(which deduplicate_bismark)) "

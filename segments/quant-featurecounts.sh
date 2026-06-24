@@ -104,7 +104,7 @@ fi
 
 if [ -s "$counts_clean" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 

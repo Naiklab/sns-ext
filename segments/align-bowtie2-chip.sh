@@ -89,7 +89,7 @@ if [ -s "$bam" ] && [ -s "$bai" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
 	echo -e "\n $script_name ADD $sample TO $samples_csv \n" >&2
 	echo "${sample},${bam}" >> "$samples_csv"
-	exit 1
+	exit 0
 fi
 
 # delete BAM (likely incomplete since the corresponding BAI was not generated)
@@ -119,7 +119,7 @@ fi
 #module add samtools/1.9
 #module add sambamba/0.6.8
 
-sambamba_bin="sambamba-0.6.8"
+sambamba_bin="sambamba"
 
 # adjust for single/paired end
 if [ -n "$fastq_R2" ] ;then

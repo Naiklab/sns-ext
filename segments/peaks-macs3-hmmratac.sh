@@ -3,7 +3,6 @@
 
 # HMMRATAC peak calling for ATAC-seq data
 
-source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -54,7 +53,7 @@ peaks_file="${macs_logs_dir}/${sample}_accessible_regions.gappedPeak"
 
 if [ -s "$peaks_bed" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 
@@ -89,7 +88,6 @@ blacklist=$(bash ${code_dir}/scripts/get-set-setting.sh "${proj_dir}/settings.tx
 # MACS3 is part of condaenvs/2023/macs3 module
 
 #module add macs/3.0.2
-source activate $MACS3_ENV # Contains sambamba
 
 echo
 echo " * MACS path: $(readlink -f $(which macs3)) "

@@ -63,7 +63,7 @@ bismark_cpg_report_gz="${bismark_meth_dir}/${sample}.CpG_report.txt.gz"
 
 if [ -s "$bismark_report_short" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 
@@ -335,8 +335,8 @@ ${proj_dir}/summary.${segment_name}.csv \
 combined_png_2X="${proj_dir}/summary.${segment_name}.mbias.2x.png"
 combined_png_4X="${proj_dir}/summary.${segment_name}.mbias.4x.png"
 
-rm "$combined_png_3X"
-rm "$combined_png_4X"
+rm -f "$combined_png_2X"
+rm -f "$combined_png_4X"
 
 # -geometry +20+20 = 20px x and y padding
 # -tile 4x = 4 images wide

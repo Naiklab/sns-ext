@@ -99,7 +99,7 @@ fi
 
 if [ -s "$rsem_expcounts_txt" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 
@@ -110,10 +110,8 @@ fi
 
 #module load bowtie2/2.2.8
 
-rsem_bin_dir="/ifs/home/id460/software/RSEM-1.2.31/bin"
-
-echo " * RSEM: ${rsem_bin_dir}/rsem-calculate-expression "
-echo " * RSEM version: $(${rsem_bin_dir}/rsem-calculate-expression --version) "
+echo " * RSEM: $(readlink -f $(which rsem-calculate-expression)) "
+echo " * RSEM version: $(rsem-calculate-expression --version) "
 echo " * bowtie2: $(readlink -f $(which bowtie2)) "
 echo " * bowtie2 version: $(bowtie2 --version 2>&1 | head -1) "
 echo " * RSEM REF: $rsem_genome "

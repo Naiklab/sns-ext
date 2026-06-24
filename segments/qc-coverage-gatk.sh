@@ -102,7 +102,7 @@ fi
 
 # command
 # this segment failed for canFam3 WES (1.1M targets) with error "adjust the maximum heap size provided to Java"
-gatk_jar="/gpfs/data/igorlab/software/GenomeAnalysisTK/GenomeAnalysisTK-3.8-1/GenomeAnalysisTK.jar"
+gatk_jar="/hpc/packages/minerva-common/gatk-mssm/3.3.2/target/GenomeAnalysisTK.jar"
 gatk_cmd="java -Xms32G -Xmx32G -jar ${gatk_jar}"
 
 if [ ! -s "$gatk_jar" ] ; then

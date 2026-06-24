@@ -40,10 +40,11 @@ if [ ! -s "$fastq" ] ; then
 	exit 1
 fi
 
-centrifuge_index="/gpfs/data/igorlab/ref/Centrifuge/nt_2018_3_3/nt"
+code_dir=$(dirname $(dirname "$script_path"))
+centrifuge_index=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-CENTRIFUGE)
 
 if [ ! -s "${centrifuge_index}.1.cf" ] ; then
-	echo -e "\n $script_name ERROR: REF $centrifuge_index DOES NOT EXIST \n" >&2
+	echo -e "\n $script_name ERROR: REF-CENTRIFUGE $centrifuge_index DOES NOT EXIST (add to settings.txt) \n" >&2
 	exit 1
 fi
 
@@ -84,11 +85,12 @@ fi
 
 # Centrifuge
 
-centrifuge_bin="/gpfs/data/igorlab/software/Centrifuge/centrifuge-1.0.4.1/bin/centrifuge"
+module load centrifuge/1.0.4
+centrifuge_bin="centrifuge"
 
 echo
-echo " * Centrifuge: $(readlink -f $(which $centrifuge_bin)) "
-echo " * Centrifuge version: $($centrifuge_bin --version 2>&1 | head -1) "
+echo " * Centrifuge: $(readlink -f $(which centrifuge)) "
+echo " * Centrifuge version: $(centrifuge --version 2>&1 | head -1) "
 echo " * FASTQ: $fastq "
 echo " * results: $results_txt "
 echo " * report: $report_txt "

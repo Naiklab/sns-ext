@@ -166,30 +166,13 @@ fi
 # genome-specific settings
 
 genome_build=$(basename "$genome_dir")
-if [[ "$genome_build" == "hg19" ]] ; then
-	chr_files_dir="/gpfs/data/igorlab/ref/iGenomes/Homo_sapiens/UCSC/hg19/Sequence/Chromosomes/"
-	gem="/gpfs/data/igorlab/ref/hg19/FREEC/out100m2_hg19.gem"
-	snps_vcf="/gpfs/data/igorlab/ref/hg19/dbSNP/common_all_20170710.snv.maf5.vcf"
-	snps_bed="/gpfs/data/igorlab/ref/hg19/dbSNP/common_all_20170710.snv.maf5.bed"
-elif [[ "$genome_build" == "hg38" ]] ; then
-	chr_files_dir="/gpfs/data/igorlab/ref/hg38/chromosomes/"
-	gem="/gpfs/data/igorlab/ref/hg38/genome.len100.mm2.mappability"
-	snps_vcf="/gpfs/data/igorlab/ref/hg38/dbSNP/common_all_20170710.snv.maf5.vcf"
-	snps_bed="/gpfs/data/igorlab/ref/hg38/dbSNP/common_all_20170710.snv.maf5.bed"
-elif [[ "$genome_build" == "mm10" ]] ; then
-	chr_files_dir="/gpfs/data/igorlab/ref/iGenomes/Mus_musculus/UCSC/mm10/Sequence/Chromosomes/"
-	gem="/gpfs/data/igorlab/ref/mm10/FREEC/out100m4_mm10.gem"
-	snps_vcf=""
-	snps_bed=""
-	echo -e "\n $script_name ERROR: UNSUPPORTED GENOME \n" >&2
-	exit 1
-elif [[ "$genome_build" == "canFam3" ]] ; then
-	chr_files_dir="/gpfs/data/igorlab/ref/canFam3/chromosomes/"
-	gem="/gpfs/data/igorlab/ref/canFam3/genome.len100.mm2.mappability"
-	snps_vcf="/gpfs/data/igorlab/ref/canFam3/dbSNP/dbsnp.151.snp.validated.vcf"
-	snps_bed="/gpfs/data/igorlab/ref/canFam3/dbSNP/dbsnp.151.snp.validated.bed"
-else
-	echo -e "\n $script_name ERROR: UNSUPPORTED GENOME \n" >&2
+chr_files_dir=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-FREEC-CHR-DIR)
+gem=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-FREEC-GEM)
+snps_vcf=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-FREEC-DBSNP-VCF)
+snps_bed=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-FREEC-DBSNP-BED)
+
+if [ ! -d "$chr_files_dir" ] ; then
+	echo -e "\n $script_name ERROR: REF-FREEC-CHR-DIR $chr_files_dir DOES NOT EXIST (add to settings.txt) \n" >&2
 	exit 1
 fi
 
@@ -371,8 +354,7 @@ sleep 5
 
 cd "$sample_freec_logs_dir"
 
-freec_dir="/gpfs/data/igorlab/software/FREEC/FREEC-11.6"
-freec_bin="${freec_dir}/src/freec"
+freec_bin="/hpc/packages/minerva-common/control-freec/11.3/bin/freec"
 
 echo
 echo " * FREEC: $(readlink -f $freec_bin) "

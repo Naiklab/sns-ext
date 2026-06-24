@@ -106,7 +106,7 @@ fi
 #module add bwa/0.7.17
 #module add sambamba/0.6.8
 
-sambamba_bin="sambamba-0.6.8"
+sambamba_bin="sambamba"
 
 echo
 echo " * BWA: $(readlink -f $(which bwa)) "
@@ -162,8 +162,8 @@ if [ ! -s "$bam_temp" ] ; then
 	exit 1
 fi
 
-if [ ! -s "${bam_temp}.bai"] ; then
-	echo -e "\n $script_name ERROR: BAI ${bam_dd_temp}.bai NOT GENERATED \n" >&2
+if [ ! -s "${bam_temp}.bai" ] ; then
+	echo -e "\n $script_name ERROR: BAI ${bam_temp}.bai NOT GENERATED \n" >&2
 	# delete BAM since something went wrong and it might be corrupted
 	rm -fv "$bam_temp"
 	exit 1

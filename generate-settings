@@ -40,6 +40,7 @@ sub main {
 	my $settings_gtf;
 	my $fastq_screen;
 	my $ref_star;
+	my $ref_salmon;
 	my $strand;
 	my $flat;
 	my $interval_list;
@@ -59,6 +60,7 @@ sub main {
 		$settings_gtf="REF-GTF|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Annotation/Gencode/Human/GRCh38/current/gencode.v40.primary_assembly.annotation.gtf";
 		$fastq_screen="REF-FASTQSCREEN|/sc/arion/projects/naiklab/ikjot/reference_files/fastq_screen.conf";
 		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR-human-2.7.11b";
+		$ref_salmon="REF-SALMON|/sc/arion/projects/naiklab/ikjot/reference_files/salmon-hg38-index";
 		$strand="EXP-STRAND|unstr"; # Set to unstr by default
 		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/refFlat.no_chr.txt.gz";
 		$interval_list="REF-RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/hg38/hg38_rRNA.full.list";
@@ -74,9 +76,10 @@ sub main {
 		$settings_gtf="REF-GTF|/sc/arion/projects/data-ark/Public_Unrestricted/reference_genome/Annotation/Gencode/Mouse/GRCm39/current/gencode.vM29.primary_assembly.annotation.gtf";
 		$fastq_screen="REF-FASTQSCREEN|/sc/arion/projects/naiklab/ikjot/reference_files/fastq_screen.conf";
 		$ref_star="REF-STAR|/sc/arion/projects/naiklab/ikjot/reference_files/STAR-mouse-2.7.11b";
+		$ref_salmon="REF-SALMON|/sc/arion/projects/naiklab/ikjot/reference_files/salmon-mm10-index";
 		$strand="EXP-STRAND|unstr"; # Set to unstr by default
 		$flat="REF-REFFLAT|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/refFlat.no_chr.txt.gz";
-		$interval_list="REF-RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/mm10_rRNA.full.list";
+		$interval_list="REF-RRNAINTERVALLIST|/sc/arion/projects/naiklab/ikjot/reference_files/mm10/mm10_rRNA.primary.list";
 		$bowtie2="REF-BOWTIE2|/sc/arion/projects/naiklab/ikjot/reference_files/bowtie2_mm10_index/mouse_bowtie2_index";
 		$blacklist="REF-BLACKLIST|/sc/arion/projects/naiklab/ikjot/reference_files/blacklist_files/mm10.blacklist.bed";
 		$chrom_sizes="REF-CHROMSIZES|/sc/arion/projects/naiklab/ikjot/reference_files/Chrom_sizes/mm10.chrom_sizes_ensembl.txt";
@@ -94,6 +97,7 @@ sub main {
 	print $fh "$settings_gtf\n";
 	print $fh "$fastq_screen\n";
 	print $fh "$ref_star\n";
+	print $fh "$ref_salmon\n";
 	print $fh "$strand\n";
 	print $fh "$flat\n";
 	print $fh "$interval_list\n";
@@ -101,7 +105,6 @@ sub main {
 	print $fh "$blacklist\n";
 	print $fh "$chrom_sizes\n";
 	print $fh "$genome_build\n";
-	print $fh "$interval_list\n";
 	close $fh;
 
 	# get values to make sure they were set properly

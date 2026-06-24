@@ -146,7 +146,7 @@ fi
 
 # configure Manta
 
-manta_dir="/gpfs/data/igorlab/software/manta/manta-1.5.0"
+manta_dir="/hpc/packages/minerva-centos7/manta/1.6.0"
 manta_config_py="${manta_dir}/bin/configManta.py"
 
 echo
@@ -225,7 +225,7 @@ fi
 
 # configure Strelka
 
-strelka_dir="/gpfs/data/igorlab/software/strelka/strelka-2.9.10"
+strelka_dir="/hpc/packages/minerva-centos7/strelka/2.9.10"
 strelka_config_py="${strelka_dir}/bin/configureStrelkaSomaticWorkflow.py"
 
 echo
@@ -398,11 +398,10 @@ fi
 
 #module add picard/2.18.17
 
-picard_jar="${PICARD_ROOT}/libs/picard.jar"
-picard_base_cmd="java -Xms8G -Xmx8G -jar $picard_jar MergeVcfs VERBOSITY=WARNING QUIET=true"
+picard_base_cmd="picard MergeVcfs VERBOSITY=WARNING QUIET=true"
 
 echo
-echo " * Picard: $picard_jar "
+echo " * Picard: $(readlink -f $(which picard)) "
 echo " * SNVs VCF: $vcf_snvs_fixed "
 echo " * indels VCF: $vcf_indels_fixed "
 echo " * out VCF: $vcf_combined "

@@ -45,6 +45,12 @@ fi
 #########################
 
 
+code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
+
 # settings and files
 
 summary_dir="${proj_dir}/summary"
@@ -83,7 +89,7 @@ fi
 if [ -s "$fastq_R1_trim" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
 	echo "${sample},${fastq_R1_trim},${fastq_R2_trim}" >> "$samples_csv"
-	exit 1
+	exit 0
 fi
 
 

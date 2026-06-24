@@ -105,7 +105,7 @@ fi
 # GATK settings
 
 # command
-gatk_jar="/gpfs/data/igorlab/software/GenomeAnalysisTK/GenomeAnalysisTK-3.8-1/GenomeAnalysisTK.jar"
+gatk_jar="/hpc/packages/minerva-common/gatk-mssm/3.3.2/target/GenomeAnalysisTK.jar"
 gatk_cmd="java -Xms8G -Xmx8G -jar $gatk_jar"
 
 gatk_omit_arg="--omitIntervalStatistics --omitLocusTable --omitDepthOutputAtEachBase"

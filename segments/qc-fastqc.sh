@@ -2,7 +2,6 @@
 
 
 # run FastQC
-source ~/.bashrc  # Reload the bashrc file
 
 # script filename
 script_path="${BASH_SOURCE[0]}"
@@ -28,6 +27,12 @@ fastq=$4
 #########################
 
 
+code_dir=$(dirname $(dirname "$script_path"))
+
+# activate pixi environment for access to bioinformatics tools
+eval "$(pixi shell-hook --manifest-path ${code_dir}/pixi.toml)"
+
+
 # settings and files
 
 out_dir="${proj_dir}/QC-FastQC"
@@ -47,7 +52,7 @@ report_zip="${out_dir}/${fastqc_basename}.zip"
 
 if [ -s "$report_html" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 

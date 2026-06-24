@@ -80,7 +80,7 @@ macs_bw="${bigwig_dir}/${sample}.macs2.bw"
 
 if [ -s "$peaks_bed" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 #########################

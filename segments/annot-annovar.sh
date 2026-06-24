@@ -119,7 +119,7 @@ fi
 
 # ANNOVAR directory
 annovar_path="/gpfs/data/igorlab/software/annovar/annovar-170716"
-annovar_db_path="/gpfs/data/igorlab/ref/annovar"
+annovar_db_path="/hpc/packages/minerva-common/annovar/2019Oct24/annovar/humandb"
 
 # genome build (used to define settings and as table_annovar.pl parameter)
 genome_build=$(basename "$genome_dir")

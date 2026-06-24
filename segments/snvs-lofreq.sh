@@ -143,12 +143,12 @@ fi
 
 # LoFreq
 
-lofreq_bin="/gpfs/data/igorlab/software/LoFreq/lofreq_star-2.1.3.1/bin/lofreq"
-lofreq_gt_py="/gpfs/data/igorlab/software/LoFreq/lofreq2_add_fake_gt.py"
+module load lofreq/2.1.5
+lofreq_bin="lofreq"
 
 echo
-echo " * LoFreq: $(readlink -f $(which $lofreq_bin)) "
-echo " * LoFreq version: $($lofreq_bin version 2>&1 | head -1) "
+echo " * LoFreq: $(readlink -f $(which lofreq)) "
+echo " * LoFreq version: $(lofreq version 2>&1 | head -1) "
 echo " * Python: $(readlink -f $(which python)) "
 echo " * Python version: $(python --version 2>&1) "
 echo " * BAM: $bam "
@@ -195,19 +195,11 @@ fi
 #module add python/2.7.17
 
 echo
-echo " * lofreq2_add_fake_gt.py: $(readlink -f $(which $lofreq_gt_py)) "
-echo " * Python: $(readlink -f $(which python)) "
-echo " * Python version: $(python --version 2>&1) "
 echo " * VCF original: $vcf_original "
 echo " * VCF with GT: $vcf_add_gt "
 echo
 
-lofreq_gt_cmd="
-python $lofreq_gt_py \
---vcf-in $vcf_original \
---samples $sample \
---vcf-out $vcf_add_gt \
-"
+lofreq_gt_cmd="lofreq add-fake-gt --vcf-in $vcf_original --vcf-out $vcf_add_gt"
 echo -e "\n CMD: $lofreq_gt_cmd \n"
 $lofreq_gt_cmd
 

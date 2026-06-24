@@ -57,7 +57,7 @@ salmon_quant_json="${salmon_logs_dir}/lib_format_counts.json"
 
 if [ -s "$salmon_counts_txt" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 
@@ -106,8 +106,6 @@ fi
 
 # Salmon
 
-salmon_bin="/gpfs/data/igorlab/software/Salmon/salmon-1.6.0_linux_x86_64/bin/salmon"
-
 #  -l [ --libType ] arg       Format string describing the library type
 #  -i [ --index ] arg         salmon index
 #  -r [ --unmatedReads ] arg  List of files containing unmated reads of (e.g. single-end reads)
@@ -130,8 +128,8 @@ else
 fi
 
 echo
-echo " * Salmon: $(readlink -f $(which $salmon_bin)) "
-echo " * Salmon version: $($salmon_bin --version | head -1) "
+echo " * Salmon: $(readlink -f $(which salmon)) "
+echo " * Salmon version: $(salmon --version 2>&1 | head -1) "
 echo " * Salmon index: $salmon_index "
 echo " * GTF: $gtf "
 echo " * FASTQ R1: $fastq_R1 "
@@ -143,7 +141,7 @@ echo " * TPMs: $salmon_tpms_txt "
 echo
 
 salmon_cmd="
-$salmon_bin --no-version-check quant \
+salmon --no-version-check quant \
 --threads $threads \
 --index $salmon_index \
 --geneMap $gtf \
@@ -214,16 +212,13 @@ gzip "${salmon_quant_dir}/${sample}.quant.sf"
 
 # generate summary
 
-# jq binary (command-line JSON processor)
-jq="/gpfs/data/igorlab/software/jq/jq-1.6-linux64"
-
 # extract stats
 # lib_type=$(cat "$salmon_quant_log" | grep -m 1 "most likely library type" | sed 's/.*library type as //')
-lib_type=$(cat "$salmon_quant_json" | "$jq" -r ".expected_format")
+lib_type=$(jq -r ".expected_format" "$salmon_quant_json")
 echo "library type: $lib_type"
-# num_compatible_frags=$(cat "$salmon_quant_json" | "$jq" -r ".num_compatible_fragments")
+# num_compatible_frags=$(jq -r ".num_compatible_fragments" "$salmon_quant_json")
 # echo "compatible fragments: $num_compatible_frags"
-num_assigned_frags=$(cat "$salmon_quant_json" | "$jq" -r ".num_assigned_fragments")
+num_assigned_frags=$(jq -r ".num_assigned_fragments" "$salmon_quant_json")
 echo "assigned fragments: $num_assigned_frags"
 map_rate=$(cat "$salmon_quant_log" | grep -m 1 "Mapping rate" | sed 's/.*rate = //')
 echo "mapping rate: $map_rate"
@@ -251,7 +246,7 @@ cat ${summary_dir}/*.${segment_name}.csv | LC_ALL=C sort -t ',' -k1,1 | uniq > "
 
 # file base of merged output
 merged_counts_base="${proj_dir}/quant.salmon"
-merged_counts_rds="${merged_counts_base}.tximport.rds"
+merged_counts_rds="${merged_counts_base}.tximport.gene.lengthScaledTPM.rds"
 
 # check how many samples are still processing ("aux_info" directory is deleted at the end of this segment)
 num_active_samples=$(find "$salmon_proj_logs_dir" -type d -name "aux_info" | wc -l)
@@ -270,9 +265,11 @@ if [[ "$num_active_samples" -lt 3 && "$merged_counts_rds" -ot "${salmon_quant_di
 	echo " * Rscript version: $(Rscript --version 2>&1) "
 	echo
 
-	Rscript --vanilla ${code_dir}/scripts/test-package.R optparse
-	Rscript --vanilla ${code_dir}/scripts/test-package.R mnormt
-	Rscript --vanilla ${code_dir}/scripts/test-package.R limma
+	Rscript --vanilla ${code_dir}/scripts/test-package.R tximport
+	Rscript --vanilla ${code_dir}/scripts/test-package.R GenomicFeatures
+	Rscript --vanilla ${code_dir}/scripts/test-package.R glue
+	Rscript --vanilla ${code_dir}/scripts/test-package.R stringr
+	Rscript --vanilla ${code_dir}/scripts/test-package.R readr
 
 	# launch the analysis R script
 	bash_cmd="Rscript --vanilla ${code_dir}/scripts/quant-merge-salmon.R $gtf $salmon_quant_dir $merged_counts_base"

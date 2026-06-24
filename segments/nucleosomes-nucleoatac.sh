@@ -113,7 +113,7 @@ nucleoatac_nuc_smooth_bw="${nuc_dir}/${sample}.nucleoatac.smooth.bw"
 
 if [ -s "$peaks_bed" ] ; then
 	echo -e "\n $script_name SKIP SAMPLE $sample \n" >&2
-	exit 1
+	exit 0
 fi
 
 
@@ -188,9 +188,15 @@ eval "$bash_cmd"
 
 # NucleoATAC
 
-# activate virtualenv
-unset PYTHONPATH
-source /ifs/home/id460/.virtualenvs/nucleoatac/bin/activate
+# NucleoATAC must be in PATH (install in a separate conda env and activate before running, or add REF-NUCLEOATAC-ENV to settings.txt)
+nucleoatac_env=$(bash "${code_dir}/scripts/get-set-setting.sh" "${proj_dir}/settings.txt" REF-NUCLEOATAC-ENV 2>/dev/null)
+if [ -n "$nucleoatac_env" ] && [ -f "${nucleoatac_env}/bin/activate" ] ; then
+	unset PYTHONPATH
+	source "${nucleoatac_env}/bin/activate"
+elif ! command -v nucleoatac &>/dev/null ; then
+	echo -e "\n $script_name ERROR: nucleoatac not found — set REF-NUCLEOATAC-ENV in settings.txt \n" >&2
+	exit 1
+fi
 
 # cython has issues with gcc 4.4
 module unload gcc
