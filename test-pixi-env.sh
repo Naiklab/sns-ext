@@ -118,11 +118,20 @@ echo ""
 echo "--- R Packages ---"
 Rscript --vanilla "${script_dir}/scripts/test-all-r-packages.R"
 r_exit=$?
+# parse counts from the CSV written by the R script (more reliable than scraping stdout)
+results_csv="${script_dir}/r-package-test-results.csv"
+if [ -f "$results_csv" ]; then
+    r_total=$(awk -F',' 'NR>1 {count++} END {print count+0}' "$results_csv")
+    r_failed=$(awk -F',' 'NR>1 && $2=="\"FAILED\"" {count++} END {print count+0}' "$results_csv")
+    r_passed=$(awk -F',' 'NR>1 && $2=="\"OK\"" {count++} END {print count+0}' "$results_csv")
+else
+    r_total="?"; r_failed="?"; r_passed="?"
+fi
 if [ $r_exit -eq 0 ]; then
-    echo "  [PASS] R package test completed (35/35)"
+    echo "  [PASS] R package test completed (${r_passed}/${r_total})"
     (( pass++ ))
 else
-    echo "  [FAIL] R package test exited with code $r_exit"
+    echo "  [FAIL] R package test: ${r_failed} package(s) failed (${r_passed}/${r_total} passed)"
     (( fail++ ))
 fi
 

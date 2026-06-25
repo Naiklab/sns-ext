@@ -124,3 +124,6 @@ if (sum(results$status == "OK") > 0) {
 # Save results to file
 write.csv(results, "r-package-test-results.csv", row.names = FALSE)
 cat("\nResults saved to: r-package-test-results.csv\n")
+
+n_failed <- sum(results$status == "FAILED")
+if (n_failed > 0) quit(status = 1)

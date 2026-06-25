@@ -1,4 +1,4 @@
-[project]
+[workspace]
 name = "sns-ext"
 version = "0.1.0"
 description = "SNS-EXT Pipeline with Pixi - Based on actual module dependencies"
@@ -49,6 +49,7 @@ macs3 = "*"
 # Quantification
 subread = "*"
 salmon = "*"
+gffread = "*"
 rsem = "*"
 
 # Variant calling (GATK alternatives via conda)

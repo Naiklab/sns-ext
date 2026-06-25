@@ -73,8 +73,6 @@ library("stringr")
 # for differenial expression
 library("DESeq2")
 library("ashr")
-library("genefilter")
-
 # for genomic annotations
 library("rtracklayer")
 library("GenomicRanges")

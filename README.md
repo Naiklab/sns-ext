@@ -43,96 +43,90 @@ For more installation options, see: [https://pixi.sh/latest/getting_started/inst
 
 ## Installation
 
+### 1. Clone the repository
+
 ```bash
-# Clone the repository (development branch)
 git clone -b development https://github.com/Naiklab/sns-ext.git
 cd sns-ext
-
-# Allocate a bash interactive job for installation step (Please edit the project to match your project account)
-bsub -Is -P  <add-project-account> -q premium -n 4 -W 24:00 -R 'rusage[mem=64000]' -R span[hosts=1] bash
-
-#Load Proxies module to enable internet access
-module load proxies
-
-# IMPORTANT: Redirect pixi cache to your project space to avoid home directory quota issues.
-# Pixi downloads large packages (~several GB) into ~/.cache/rattler by default, which will
-# exceed the home directory quota on Minerva. Set PIXI_CACHE_DIR before running pixi install.
-export PIXI_CACHE_DIR=/sc/arion/projects/<your-project-dir>/.pixi-cache
-
-# Install all dependencies using pixi
-pixi install
-
-# Make scripts executable
-chmod -R 777 /path/to/your/sns-ext
 ```
 
-> **Note**: Add `export PIXI_CACHE_DIR=/sc/arion/projects/<your-project-dir>/.pixi-cache` to your
-> `~/.bashrc` so you don't need to set it every session. The cache can be 10–20 GB, so project
-> space is the right home for it on Minerva.
+### 2. Allocate a compute node
 
-### Troubleshooting: "Quota exceeded" during `pixi install`
-
-If you see an error like:
-```
-Error: × failed to fetch qt6-main-...conda
-  ╰─▶ Quota exceeded (os error 122)
-```
-
-Your home directory (`/hpc/users/<username>/`) has hit its disk quota. Pixi's package cache
-defaults to `~/.cache/rattler/`, which can grow to 10–20 GB during installation.
-
-**Fix**: Point the cache to your project space (which has a much larger quota):
+`pixi install` downloads ~10–20 GB of packages and must run on a compute node, not a login node. You will need your **LSF project account** (format: `acc_<labname>`) for this and all future job submissions.
 
 ```bash
-# Set cache location to your project directory
-export PIXI_CACHE_DIR=/sc/arion/projects/<your-project-dir>/.pixi-cache
+bsub -Is -P <your-lsf-account> -q premium -n 4 -W 4:00 -R 'rusage[mem=64000]' -R span[hosts=1] bash
+module load proxies
+```
 
-# Optional: clear any partial cache from the failed attempt
+> `module load proxies` is required to enable internet access on Minerva compute nodes.
+
+### 3. Run setup
+
+The setup script will ask you two questions — your **LSF project account** and your **project directory** (the base folder in `/sc/arion/projects/` where your data and pipeline cache will live). It then configures the pixi cache, installs all dependencies, and verifies the environment.
+
+```bash
+bash setup.sh
+```
+
+The script will prompt:
+```
+Enter your LSF project account: acc_naiklab
+Enter your project directory: /sc/arion/projects/naiklab/myuser
+```
+
+Setup takes 10–30 minutes on first run (package downloads). When it completes successfully you will see:
+
+```
+==========================================
+  SETUP COMPLETE
+==========================================
+```
+
+### Troubleshooting: "Quota exceeded" or corrupted environment
+
+If `pixi install` fails with a quota or corrupted environment error:
+
+```bash
+# Clear any partial cache from the failed attempt
 rm -rf ~/.cache/rattler
 
-# Retry installation
-pixi install
+# Reset the pixi environment and retry
+pixi clean && pixi install
 ```
 
-To make this permanent, add the export line to your `~/.bashrc`:
+If `pixi clean` itself fails with permission errors, remove the environment manually:
 
 ```bash
-echo 'export PIXI_CACHE_DIR=/sc/arion/projects/<your-project-dir>/.pixi-cache' >> ~/.bashrc
-source ~/.bashrc
+chmod -R u+rwX .pixi/envs/default && rm -rf .pixi/envs && pixi install
 ```
 
 ## Quick Start
 
-1. **Activate pixi environment** (required before running any pipeline commands):
+After setup, all pipeline commands use the `sns-ext` directory as a prefix. In the examples below, replace `/path/to/sns-ext` with your actual clone location.
+
+1. **Create a project settings file** in your analysis directory:
 
    ```bash
-   cd /path/to/your/sns-ext
-   eval "$(pixi shell-hook)"
+   cd /path/to/your/analysis
+   /path/to/sns-ext/generate-settings hg38   # or mm10 for mouse
    ```
 
-2. **Generate project settings**:
+   | Genome | Description |
+   |--------|-------------|
+   | `hg38` | Human genome (GRCh38) |
+   | `mm10` | Mouse genome (GRCm39) |
+
+2. **Gather FASTQ files**:
 
    ```bash
-   /path/to/your/sns-ext/generate-settings <Genome>
+   /path/to/sns-ext/gather-fastqs /path/to/fastq/directory
    ```
 
-## Genome Configuration Options
-
-| Genome Build | Description |
-|-------|-------------|
-| `mm10` | Mouse genome (GRCm38/mm10) - for mouse/murine samples |
-| `hg38` | Human genome (GRCh38/hg38) - for human samples |
-
-3. **Gather FASTQ files**:
+3. **Submit the pipeline**:
 
    ```bash
-   /path/to/your/sns-ext/gather-fastqs /path/to/fastq/directory
-   ```
-
-4. **Run analysis pipeline**:
-
-   ```bash
-   /path/to/your/sns-ext/run [route]
+   /path/to/sns-ext/run <route>
    ```
 
 ## Available Routes
@@ -170,68 +164,23 @@ The pipeline uses a settings file to configure analysis parameters. Key settings
 - Resource allocation (memory, CPU)
 - Output directory structure
 
-## Testing R Package Environment
+## Verifying the Environment
 
-To verify that all required R packages are properly installed and accessible, use the comprehensive testing script:
-
-```bash
-
-# Allocate a bash interactive job for testing (Please edit the project to match your project account)
-bsub -Is -P  <add-project-account> -q premium -n 4 -W 2:00 -R 'rusage[mem=32000]' -R span[hosts=1] bash
-
-#Load Proxies module to enable internet access
-module load proxies
-
-# Navigate to your SNS-EXT project directory
-cd /path/to/your/sns-ext
-
-# Activate the pixi environment and run the R package test
-eval "$(pixi shell-hook)"
-
-# For missing Bioconductor packages, run the following command
-Rscript install-bioconductor-packages.R
-
-# Test run to check if all packages are installed and can be loaded successfully
-Rscript test-load-install-packages.R
-
-
-```
-
-This script will:
-- ✅ Test all required R and Bioconductor packages
-- 📍 Show the installation location of each package using `find.package()`
-- 📊 Generate a summary report with success/failure status
-- 💾 Save detailed results to `r-package-test-results.csv`
-
-**Key packages tested include:**
-- **Bioconductor**: DESeq2, DiffBind, ChIPseeker, org.Hs.eg.db, org.Mm.eg.db
-- **TxDb packages**: TxDb.Hsapiens.UCSC.hg38.knownGene, TxDb.Mmusculus.UCSC.mm10.knownGene
-- **CRAN packages**: tidyverse, ggplot2, pheatmap, BiocManager
-
-**Installing missing packages:**
-
-If the test reveals missing packages, use the automated installation script:
+`setup.sh` runs this automatically at the end of installation. If you need to re-verify at any time:
 
 ```bash
-# After running the test script above, install missing packages
-Rscript scripts/install-missing-r-packages.R
-
-# Verify the installations worked by running the test again
-Rscript scripts/test-all-r-packages.R
+bash /path/to/sns-ext/test-pixi-env.sh
 ```
 
-The installation script will:
-- 🔍 Read the test results from `r-package-test-results.csv`
-- 📦 Automatically install all missing packages using BiocManager
-- ✅ Verify each installation by testing if the package loads
-- 📊 Generate an installation report in `r-package-installation-results.csv`
-- 💡 Provide manual installation suggestions for problematic packages
+This checks all CLI tools (STAR, bowtie2, samtools, salmon, etc.) and R packages in one pass. A passing run ends with:
 
-**Troubleshooting missing packages:**
-- Check if packages are listed in `pixi.toml`
-- Reinstall pixi environment: `pixi install`
-- For packages not available via conda, they can be installed directly in R using BiocManager
-- Some packages (like TxDb databases) may need manual installation due to conda availability
+```
+====================================================
+  PASSED: N   FAILED: 0
+====================================================
+```
+
+If any checks fail, the tool name and error are listed at the bottom. All pipeline dependencies are managed by pixi — if something is missing, `pixi install` in the sns-ext directory is the fix.
 
 ## Dependencies
 
