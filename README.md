@@ -46,7 +46,7 @@ For more installation options, see: [https://pixi.sh/latest/getting_started/inst
 ### 1. Clone the repository
 
 ```bash
-git clone -b development https://github.com/Naiklab/sns-ext.git
+git clone https://github.com/Naiklab/sns-ext.git
 cd sns-ext
 ```
 
